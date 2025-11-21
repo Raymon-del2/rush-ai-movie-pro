@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Your Rush AI API Key</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-purple-600 to-blue-600 p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-key text-2xl"></i>
+                <h1 class="text-2xl font-bold">Rush AI API Keys</h1>
+            </div>
+            <a href="/" class="hover:text-purple-200 transition">
+                <i class="fas fa-home mr-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4 max-w-4xl">
+        <!-- API Key Generation -->
+        <div class="bg-gray-800 rounded-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold mb-4">
+                <i class="fas fa-rocket mr-2 text-blue-500"></i>Get Your Rush AI API Key
+            </h2>
+            
+            <div class="mb-6 p-4 bg-blue-900 rounded-lg border border-blue-700">
+                <h3 class="text-lg font-semibold mb-2 text-blue-300">
+                    <i class="fas fa-star mr-2"></i>What You Can Do With Rush AI API:
+                </h3>
+                <ul class="list-disc list-inside space-y-1 text-sm text-blue-200">
+                    <li><strong>AI Chat:</strong> Movie recommendations, actor insights, film analysis</li>
+                    <li><strong>Movie Search:</strong> Access TMDB database with AI-enhanced results</li>
+                    <li><strong>People Search:</strong> Find actors, directors, and celebrity information</li>
+                    <li><strong>Poster Generation:</strong> AI-generated movie poster descriptions</li>
+                    <li><strong>Social Media Data:</strong> Actor social media information and web presence</li>
+                </ul>
+            </div>
+
+            <form id="apiKeyForm" class="space-y-6">
+                <div class="bg-green-900 p-4 rounded-lg border border-green-700">
+                    <h3 class="text-lg font-semibold mb-2 text-green-300">
+                        <i class="fas fa-gift mr-2"></i>Free & Unlimited Access!
+                    </h3>
+                    <p class="text-sm text-green-200">
+                        Rush AI API is completely free with unlimited requests. Build your movie apps without limits!
+                    </p>
+                </div>
+
+                <button type="submit" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition">
+                    <i class="fas fa-key mr-2"></i>Generate My Free Rush AI API Key
+                </button>
+            </form>
+        </div>
+
+        <!-- Generated API Key Display -->
+        <div id="apiKeyResult" class="hidden bg-gray-800 rounded-lg p-6 mb-6">
+            <h3 class="text-xl font-bold mb-4">
+                <i class="fas fa-check-circle mr-2 text-green-500"></i>Your Rush AI API Key
+            </h3>
+            <div class="bg-gray-700 p-4 rounded-lg font-mono text-sm break-all mb-4" id="apiKeyDisplay"></div>
+            <div class="bg-yellow-900 p-3 rounded-lg border border-yellow-700">
+                <p class="text-sm text-yellow-200">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <strong>Important:</strong> Save this API key securely! You won't be able to see it again.
+                </p>
+            </div>
+        </div>
+
+        <!-- API Usage Check -->
+        <div class="bg-gray-800 rounded-lg p-6 mb-6">
+            <h3 class="text-xl font-bold mb-4">
+                <i class="fas fa-chart-line mr-2 text-blue-500"></i>Check Your API Usage
+            </h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Your API Key</label>
+                    <input type="password" id="usageApiKey" placeholder="rush_..." 
+                           class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
+                </div>
+                <button onclick="checkUsage()" class="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold transition">
+                    <i class="fas fa-search mr-2"></i>Check Usage
+                </button>
+                <div id="usageResult" class="hidden bg-gray-700 p-4 rounded-lg"></div>
+            </div>
+        </div>
+
+        <!-- API Documentation -->
+        <div class="bg-gray-800 rounded-lg p-6">
+            <h3 class="text-xl font-bold mb-4">
+                <i class="fas fa-book mr-2 text-blue-500"></i>Quick Start Guide
+            </h3>
+            <div class="space-y-4">
+                <div>
+                    <h4 class="font-semibold text-green-400 mb-2">1. AI Chat API</h4>
+                    <div class="bg-gray-900 p-3 rounded-lg text-sm">
+                        <pre><code>POST /api/v1/chat
+Headers: X-API-Key: your_api_key_here
+Body: {"message": "What movies are similar to Inception?"}</code></pre>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-blue-400 mb-2">2. Movie Search API</h4>
+                    <div class="bg-gray-900 p-3 rounded-lg text-sm">
+                        <pre><code>GET /api/v1/movie-search?q=avatar
+Headers: X-API-Key: your_api_key_here</code></pre>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-purple-400 mb-2">3. People Search API</h4>
+                    <div class="bg-gray-900 p-3 rounded-lg text-sm">
+                        <pre><code>GET /api/v1/people-search?q=tom+cruise
+Headers: X-API-Key: your_api_key_here</code></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 text-center">
+                <a href="/docs" class="text-blue-400 hover:text-blue-300 underline">
+                    <i class="fas fa-book-open mr-2"></i>View Full API Documentation
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Generate API key
+        document.getElementById('apiKeyForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const response = await fetch('/api-keys', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ tier: 'free' })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Display the API key
+                    document.getElementById('apiKeyDisplay').textContent = result.api_key;
+                    document.getElementById('apiKeyResult').classList.remove('hidden');
+                    
+                    // Show success message
+                    showStatus('Free API key generated successfully! Start building your movie apps now!', 'success');
+                    
+                    // Scroll to result
+                    document.getElementById('apiKeyResult').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    showStatus('Error: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+            }
+        });
+
+        // Check API usage
+        async function checkUsage() {
+            const apiKey = document.getElementById('usageApiKey').value;
+            
+            if (!apiKey) {
+                showStatus('Please enter your API key', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/v1/usage', {
+                    headers: {
+                        'X-API-Key': apiKey
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    const usage = result.usage;
+                    const percentage = (usage.requests_used / usage.requests_limit) * 100;
+                    
+                    document.getElementById('usageResult').innerHTML = `
+                        <h4 class="font-semibold mb-2">Usage Statistics:</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>Requests Used:</span>
+                                <span>${usage.requests_used} / ${usage.requests_limit}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Remaining:</span>
+                                <span class="text-green-400">${usage.remaining}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Tier:</span>
+                                <span class="text-blue-400">${usage.tier}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Expires:</span>
+                                <span>${new Date(usage.expires_at).toLocaleDateString()}</span>
+                            </div>
+                            <div class="mt-3">
+                                <div class="bg-gray-600 rounded-full h-4">
+                                    <div class="bg-blue-500 h-4 rounded-full" style="width: ${Math.min(percentage, 100)}%"></div>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-1">${percentage.toFixed(1)}% used</p>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('usageResult').classList.remove('hidden');
+                } else {
+                    showStatus('Error: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Show status message
+        function showStatus(message, type) {
+            // Create status element if it doesn't exist
+            let statusDiv = document.getElementById('statusMessage');
+            if (!statusDiv) {
+                statusDiv = document.createElement('div');
+                statusDiv.id = 'statusMessage';
+                statusDiv.className = 'rounded-lg p-4 mb-6';
+                document.querySelector('main').insertBefore(statusDiv, document.querySelector('main').firstChild);
+            }
+            
+            let bgColor = 'bg-gray-700';
+            let icon = 'fa-info-circle';
+            
+            if (type === 'success') {
+                bgColor = 'bg-green-700';
+                icon = 'fa-check-circle';
+            } else if (type === 'error') {
+                bgColor = 'bg-red-700';
+                icon = 'fa-exclamation-circle';
+            }
+            
+            statusDiv.className = `${bgColor} rounded-lg p-4 mb-6`;
+            statusDiv.innerHTML = `<i class="fas ${icon} mr-2"></i>${message}`;
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                statusDiv.classList.add('hidden');
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

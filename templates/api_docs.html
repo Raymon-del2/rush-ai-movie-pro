@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rush AI API Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-purple-600 to-blue-600 p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-book text-2xl"></i>
+                <h1 class="text-2xl font-bold">Rush AI API Documentation</h1>
+            </div>
+            <a href="/" class="hover:text-purple-200 transition">
+                <i class="fas fa-home mr-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4 max-w-5xl">
+        <!-- Introduction -->
+        <div class="bg-gray-800 rounded-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold mb-4">
+                <i class="fas fa-rocket mr-2 text-blue-500"></i>Welcome to Rush AI API
+            </h2>
+            <p class="text-gray-300 mb-4">
+                The Rush AI API provides powerful movie data and AI-powered insights for developers. 
+                Build amazing movie applications with access to TMDB data, AI chat, poster generation, and more.
+            </p>
+            <div class="bg-green-900 p-4 rounded-lg border border-green-700">
+                <p class="text-green-200">
+                    <i class="fas fa-gift mr-2"></i>
+                    <strong>Completely Free:</strong> No API key required for basic usage. 
+                    Get unlimited access to all endpoints!
+                </p>
+            </div>
+        </div>
+
+        <!-- Base URL -->
+        <div class="bg-gray-800 rounded-lg p-6 mb-6">
+            <h3 class="text-xl font-bold mb-4">
+                <i class="fas fa-link mr-2 text-green-500"></i>Base URL
+            </h3>
+            <div class="bg-gray-900 p-4 rounded-lg font-mono">
+                <code>https://rashai.vercel.app/api/v1</code>
+            </div>
+        </div>
+
+        <!-- Authentication -->
+        <div class="bg-gray-800 rounded-lg p-6 mb-6">
+            <h3 class="text-xl font-bold mb-4">
+                <i class="fas fa-key mr-2 text-yellow-500"></i>Authentication
+            </h3>
+            <p class="text-gray-300 mb-4">
+                While the API is free, you can optionally use an API key for knowledge sharing and rate limiting benefits.
+            </p>
+            <div class="bg-gray-700 p-4 rounded-lg">
+                <p class="text-sm font-mono">X-API-Key: rush_your_api_key_here</p>
+                <p class="text-xs text-gray-400 mt-2">or</p>
+                <p class="text-sm font-mono">Authorization: Bearer rush_your_api_key_here</p>
+            </div>
+        </div>
+
+        <!-- Endpoints -->
+        <div class="space-y-6">
+            <!-- Chat API -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-4">
+                    <i class="fas fa-comments mr-2 text-blue-500"></i>AI Chat
+                </h3>
+                <p class="text-gray-300 mb-4">Get AI-powered movie recommendations, insights, and analysis.</p>
+                
+                <div class="mb-4">
+                    <span class="bg-blue-600 px-3 py-1 rounded text-sm">POST</span>
+                    <code class="ml-2">/api/v1/chat</code>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="font-semibold mb-2">Request Body:</h4>
+                    <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                        <pre><code>{
+  "message": "What movies are similar to Inception?",
+  "context": "User likes sci-fi thrillers"
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="font-semibold mb-2">Response:</h4>
+                    <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                        <pre><code>{
+  "response": "Based on your interest in Inception, I'd recommend...",
+  "usage": {
+    "requests_used": 1,
+    "requests_limit": 999999999,
+    "tier": "free"
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Movie Search API -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-4">
+                    <i class="fas fa-search mr-2 text-green-500"></i>Movie Search
+                </h3>
+                <p class="text-gray-300 mb-4">Search the TMDB database for movies.</p>
+                
+                <div class="mb-4">
+                    <span class="bg-green-600 px-3 py-1 rounded text-sm">GET</span>
+                    <code class="ml-2">/api/v1/movie-search</code>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="font-semibold mb-2">Query Parameters:</h4>
+                    <div class="bg-gray-900 p-4 rounded-lg text-sm">
+                        <code>?q=avatar</code>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="font-semibold mb-2">Response:</h4>
+                    <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                        <pre><code>{
+  "results": {
+    "results": [
+      {
+        "id": 19995,
+        "title": "Avatar",
+        "overview": "A paraplegic Marine...",
+        "release_date": "2009-12-18",
+        "vote_average": 7.8
+      }
+    ]
+  },
+  "usage": {
+    "requests_used": 1,
+    "requests_limit": 999999999,
+    "tier": "free"
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- People Search API -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-4">
+                    <i class="fas fa-users mr-2 text-purple-500"></i>People Search
+                </h3>
+                <p class="text-gray-300 mb-4">Find actors, directors, and other film industry professionals.</p>
+                
+                <div class="mb-4">
+                    <span class="bg-purple-600 px-3 py-1 rounded text-sm">GET</span>
+                    <code class="ml-2">/api/v1/people-search</code>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="font-semibold mb-2">Query Parameters:</h4>
+                    <div class="bg-gray-900 p-4 rounded-lg text-sm">
+                        <code>?q=tom+cruise</code>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="font-semibold mb-2">Response:</h4>
+                    <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                        <pre><code>{
+  "results": {
+    "results": [
+      {
+        "id": 500,
+        "name": "Tom Cruise",
+        "known_for_department": "Acting",
+        "profile_path": "/5xBdzNaipQcQeT5wJsxrPA8y1u.jpg"
+      }
+    ]
+  },
+  "usage": {
+    "requests_used": 1,
+    "requests_limit": 999999999,
+    "tier": "free"
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage Check API -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-4">
+                    <i class="fas fa-chart-line mr-2 text-orange-500"></i>Usage Check
+                </h3>
+                <p class="text-gray-300 mb-4">Check your API usage statistics (requires API key).</p>
+                
+                <div class="mb-4">
+                    <span class="bg-orange-600 px-3 py-1 rounded text-sm">GET</span>
+                    <code class="ml-2">/api/v1/usage</code>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="font-semibold mb-2">Response:</h4>
+                    <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                        <pre><code>{
+  "usage": {
+    "requests_used": 42,
+    "requests_limit": 999999999,
+    "remaining": 999999957,
+    "tier": "free",
+    "expires_at": "2034-11-21T12:00:00Z"
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Examples -->
+        <div class="bg-gray-800 rounded-lg p-6 mt-6">
+            <h3 class="text-xl font-bold mb-4">
+                <i class="fas fa-code mr-2 text-blue-500"></i>Code Examples
+            </h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <h4 class="font-semibold text-green-400 mb-2">Python</h4>
+                    <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                        <pre><code>import requests
+
+# AI Chat
+response = requests.post('https://rashai.vercel.app/api/v1/chat', 
+                         json={'message': 'Recommend sci-fi movies'})
+print(response.json())
+
+# Movie Search
+response = requests.get('https://rashai.vercel.app/api/v1/movie-search?q=avatar')
+print(response.json())</code></pre>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-blue-400 mb-2">JavaScript</h4>
+                    <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                        <pre><code>// AI Chat
+fetch('https://rashai.vercel.app/api/v1/chat', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({message: 'Movie recommendations'})
+}).then(r => r.json()).then(console.log)
+
+// Movie Search
+fetch('https://rashai.vercel.app/api/v1/movie-search?q=inception')
+  .then(r => r.json()).then(console.log)</code></pre>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-yellow-400 mb-2">cURL</h4>
+                    <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                        <pre><code># AI Chat
+curl -X POST https://rashai.vercel.app/api/v1/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Best action movies"}'
+
+# Movie Search
+curl "https://rashai.vercel.app/api/v1/movie-search?q=batman"</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="bg-gray-800 rounded-lg p-6 mt-6">
+            <h3 class="text-xl font-bold mb-4">
+                <i class="fas fa-star mr-2 text-yellow-500"></i>Key Features
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <h4 class="font-semibold text-blue-400 mb-2">🤖 AI-Powered</h4>
+                    <p class="text-sm text-gray-300">Advanced AI for movie recommendations and insights</p>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <h4 class="font-semibold text-green-400 mb-2">🎬 TMDB Integration</h4>
+                    <p class="text-sm text-gray-300">Access to comprehensive movie and people database</p>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <h4 class="font-semibold text-purple-400 mb-2">🧠 Knowledge Sharing</h4>
+                    <p class="text-sm text-gray-300">AI learns from user interactions to improve responses</p>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <h4 class="font-semibold text-orange-400 mb-2">🚀 Free & Unlimited</h4>
+                    <p class="text-sm text-gray-300">No rate limits or pricing tiers</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

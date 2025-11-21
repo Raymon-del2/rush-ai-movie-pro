@@ -13,7 +13,12 @@ class Config:
     OLLAMA_MODEL = os.getenv('OLLAMA_MODEL', 'llama3.2:3b')
     
     # AI Provider Configuration
-    AI_PROVIDER = os.getenv('AI_PROVIDER', 'ollama')  # ollama, openai, anthropic, etc.
+    AI_PROVIDER = os.getenv('AI_PROVIDER', 'custom')  # Use custom API for free access
+    
+    # Free AI API (Groq - fast and free)
+    CUSTOM_API_KEY = os.getenv('CUSTOM_API_KEY', 'gsk_YourGroqAPIKeyHere')
+    CUSTOM_BASE_URL = os.getenv('CUSTOM_BASE_URL', 'https://api.groq.com/openai/v1')
+    CUSTOM_MODEL = os.getenv('CUSTOM_MODEL', 'llama3-8b-8192')
     
     # OpenAI Configuration (optional)
     OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
@@ -28,10 +33,10 @@ class Config:
     GOOGLE_AI_API_KEY = os.getenv('GOOGLE_AI_API_KEY', '')
     GOOGLE_AI_MODEL = os.getenv('GOOGLE_AI_MODEL', 'gemini-pro')
     
-    # Custom AI Configuration
-    CUSTOM_API_KEY = os.getenv('CUSTOM_API_KEY', '')
-    CUSTOM_BASE_URL = os.getenv('CUSTOM_BASE_URL', '')
-    CUSTOM_MODEL = os.getenv('CUSTOM_MODEL', '')
+    # Custom AI Configuration (Groq - Free AI API)
+    CUSTOM_API_KEY = os.getenv('CUSTOM_API_KEY', 'gsk_YourGroqAPIKeyHere')
+    CUSTOM_BASE_URL = os.getenv('CUSTOM_BASE_URL', 'https://api.groq.com/openai/v1')
+    CUSTOM_MODEL = os.getenv('CUSTOM_MODEL', 'llama3-8b-8192')
     
     # Flask Configuration
     SECRET_KEY = os.getenv('SECRET_KEY', 'rush-ai-movie-pro-secret-key-2025')

@@ -276,8 +276,9 @@ class AIService:
     
     def _generate_custom_response(self, prompt, context="", shared_answers=[]):
         """Generate response using custom API"""
-        if not app.config.get('CUSTOM_API_KEY') or not app.config.get('CUSTOM_BASE_URL'):
-            return "Custom API configuration incomplete"
+        if not app.config.get('CUSTOM_API_KEY') or app.config.get('CUSTOM_API_KEY') == 'gsk_YourGroqAPIKeyHere':
+            # Fallback response when no API key is configured
+            return f"I'm Rush AI! I can help you find movies and celebrities. Try searching for movies like 'Avatar' or people like 'Tom Cruise'. For personalized AI responses, configure a Groq API key in your settings. Your question was: {prompt[:100]}..."
         
         system_prompt = f"""You are Rush, a movie expert AI. Help with movie recommendations, actor info, and film insights. Be concise and helpful.
         You can generate movie poster descriptions and provide social media information when available.

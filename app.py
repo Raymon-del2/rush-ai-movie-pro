@@ -659,6 +659,17 @@ def api_usage():
         }
     })
 
+@app.route('/test-env')
+def test_env():
+    """Test endpoint to check environment variables"""
+    return jsonify({
+        'CUSTOM_API_KEY_set': bool(app.config.get('CUSTOM_API_KEY')),
+        'CUSTOM_API_KEY_prefix': app.config.get('CUSTOM_API_KEY', '')[:10] if app.config.get('CUSTOM_API_KEY') else 'NOT_SET',
+        'CUSTOM_BASE_URL': app.config.get('CUSTOM_BASE_URL'),
+        'CUSTOM_MODEL': app.config.get('CUSTOM_MODEL'),
+        'AI_PROVIDER': app.config.get('AI_PROVIDER')
+    })
+
 @app.route('/docs')
 def api_docs():
     """Rush AI API Documentation"""

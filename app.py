@@ -659,6 +659,11 @@ def api_usage():
         }
     })
 
+@app.route('/debug')
+def debug():
+    """Debug route - no authentication, no dependencies"""
+    return "Rush AI Debug - Working!", 200
+
 @app.route('/health')
 def health_check():
     """Health check endpoint - no authentication required"""

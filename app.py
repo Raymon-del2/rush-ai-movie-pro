@@ -659,6 +659,15 @@ def api_usage():
         }
     })
 
+@app.route('/health')
+def health_check():
+    """Health check endpoint - no authentication required"""
+    return jsonify({
+        'status': 'healthy',
+        'app': 'Rush AI',
+        'version': '1.0.0'
+    })
+
 @app.route('/test-env')
 def test_env():
     """Test endpoint to check environment variables"""

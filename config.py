@@ -18,7 +18,7 @@ class Config:
     # Free AI API (Groq - fast and free)
     CUSTOM_API_KEY = os.getenv('CUSTOM_API_KEY', 'gsk_YourGroqAPIKeyHere')
     CUSTOM_BASE_URL = os.getenv('CUSTOM_BASE_URL', 'https://api.groq.com/openai/v1')
-    CUSTOM_MODEL = os.getenv('CUSTOM_MODEL', 'llama3-8b-8192')
+    CUSTOM_MODEL = os.getenv('CUSTOM_MODEL', 'llama-3.1-8b-instant')
     
     # OpenAI Configuration (optional)
     OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')

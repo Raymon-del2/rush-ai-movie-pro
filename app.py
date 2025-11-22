@@ -6,7 +6,7 @@ import os
 from config import Config
 from models import api_key_manager
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.config.from_object(Config)
 
 class TMDBService:

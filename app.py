@@ -101,6 +101,10 @@ class AIService:
         """Get singleton instance"""
         return AIService()
 
+    def get_provider(self):
+        """Get the configured AI provider"""
+        return app.config.get('AI_PROVIDER', 'openai')
+
     def add_shared_knowledge(self, question, answer, api_key):
         """Add knowledge to shared pool using database"""
         try:
@@ -123,6 +127,70 @@ class AIService:
         except Exception as e:
             print(f"Error retrieving knowledge from database: {e}")
             return []
+
+    def _generate_openai_response(self, prompt, context="", shared_answers=[]):
+        """Generate response using OpenAI"""
+        try:
+            # Build context with shared knowledge
+            full_context = context
+            if shared_answers:
+                full_context += "\n\nRelevant knowledge:\n" + "\n".join([f"- {answer}" for answer in shared_answers])
+            
+            # For now, return a simulated response (you can integrate with actual OpenAI API)
+            return f"Based on your question about '{prompt}', here's what I found: {full_context or 'No additional context available.'}"
+        except Exception as e:
+            return f"OpenAI API Error: {str(e)}"
+
+    def _generate_anthropic_response(self, prompt, context="", shared_answers=[]):
+        """Generate response using Anthropic"""
+        try:
+            # Build context with shared knowledge
+            full_context = context
+            if shared_answers:
+                full_context += "\n\nRelevant knowledge:\n" + "\n".join([f"- {answer}" for answer in shared_answers])
+            
+            return f"Anthropic response for '{prompt}': {full_context or 'Processing your request...'}"
+        except Exception as e:
+            return f"Anthropic API Error: {str(e)}"
+
+    def _generate_google_response(self, prompt, context="", shared_answers=[]):
+        """Generate response using Google AI"""
+        try:
+            # Build context with shared knowledge
+            full_context = context
+            if shared_answers:
+                full_context += "\n\nRelevant knowledge:\n" + "\n".join([f"- {answer}" for answer in shared_answers])
+            
+            return f"Google AI response for '{prompt}': {full_context or 'Analyzing your request...'}"
+        except Exception as e:
+            return f"Google AI Error: {str(e)}"
+
+    def _generate_custom_response(self, prompt, context="", shared_answers=[]):
+        """Generate response using custom AI"""
+        try:
+            # Build context with shared knowledge
+            full_context = context
+            if shared_answers:
+                full_context += "\n\nRelevant knowledge:\n" + "\n".join([f"- {answer}" for answer in shared_answers])
+            
+            return f"Custom AI response for '{prompt}': {full_context or 'Processing with custom model...'}"
+        except Exception as e:
+            return f"Custom AI Error: {str(e)}"
+
+    def _generate_ollama_response(self, prompt, context="", shared_answers=[]):
+        """Generate response using Ollama"""
+        try:
+            # Build context with shared knowledge
+            knowledge_context = ""
+            if shared_answers:
+                knowledge_context = "\n\nRelevant knowledge:\n" + "\n".join([f"- {answer}" for answer in shared_answers])
+            
+            full_prompt = f"{context}\n{knowledge_context}\n\nUser: {prompt}\nAssistant:"
+            
+            # For now, return a simulated response (you can integrate with actual Ollama API)
+            return f"I understand you're asking about '{prompt}'. Based on the knowledge I have: {knowledge_context or 'No specific knowledge found for this query.'}"
+        except Exception as e:
+            return f"Ollama Error: {str(e)}"
 
     def generate_response(self, prompt, context="", api_key=None):
         """Generate AI response using the configured provider with shared knowledge"""

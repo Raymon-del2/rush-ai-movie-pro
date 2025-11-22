@@ -6,18 +6,59 @@
     <title>Get Your Rush AI API Key</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Momo+Signature&display=swap" rel="stylesheet">
+    <style>
+        .momo-signature-regular {
+            font-family: "Momo Signature", cursive;
+            font-weight: 400;
+            font-style: normal;
+        }
+    </style>
 </head>
 <body class="bg-gray-900 text-white">
     <!-- Header -->
-    <header class="bg-gradient-to-r from-purple-600 to-blue-600 p-4 shadow-lg">
+    <header class="bg-white p-4 shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <img src="/static/logo.png" alt="Rush AI Logo" class="h-8 w-8 rounded-lg">
-                <h1 class="text-2xl font-bold">Rush AI API Keys</h1>
+                <h1 class="momo-signature-regular text-4xl text-purple-600">Rush AI</h1>
             </div>
-            <a href="/" class="hover:text-purple-200 transition">
-                <i class="fas fa-home mr-2"></i>Back to Dashboard
-            </a>
+            
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex space-x-4">
+                <a href="/" class="text-gray-800 hover:text-purple-600 transition">Home</a>
+                <a href="/api-keys" class="text-purple-600 hover:text-purple-700 transition font-semibold">
+                    <i class="fas fa-key mr-1"></i>Get API Key
+                </a>
+                <a href="/knowledge-keys" class="text-purple-600 hover:text-purple-700 transition font-semibold">
+                    <i class="fas fa-brain mr-1"></i>Knowledge Keys
+                </a>
+                <a href="/docs" class="text-gray-800 hover:text-purple-600 transition">API Docs</a>
+            </nav>
+            
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn" class="md:hidden text-gray-800 hover:text-purple-600 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <nav class="container mx-auto py-4 space-y-2">
+                <a href="/" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
+                    <i class="fas fa-home mr-2"></i>Home
+                </a>
+                <a href="/api-keys" class="block px-4 py-2 text-purple-600 hover:bg-purple-50 hover:text-purple-700 transition rounded font-semibold">
+                    <i class="fas fa-key mr-2"></i>Get API Key
+                </a>
+                <a href="/knowledge-keys" class="block px-4 py-2 text-purple-600 hover:bg-purple-50 hover:text-purple-700 transition rounded font-semibold">
+                    <i class="fas fa-brain mr-2"></i>Knowledge Keys
+                </a>
+                <a href="/docs" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
+                    <i class="fas fa-book mr-2"></i>API Docs
+                </a>
+            </nav>
         </div>
     </header>
 
@@ -128,6 +169,48 @@ Headers: X-API-Key: your_api_key_here</code></pre>
     </main>
 
     <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+            
+            // Change icon based on menu state
+            const icon = this.querySelector('i');
+            if (menu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', function() {
+                const menu = document.getElementById('mobileMenu');
+                const btn = document.getElementById('mobileMenuBtn');
+                const icon = btn.querySelector('i');
+                
+                menu.classList.add('hidden');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobileMenu');
+            const btn = document.getElementById('mobileMenuBtn');
+            
+            if (!menu.contains(event.target) && !btn.contains(event.target)) {
+                menu.classList.add('hidden');
+                const icon = btn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
         // Generate API key
         document.getElementById('apiKeyForm').addEventListener('submit', async function(e) {
             e.preventDefault();

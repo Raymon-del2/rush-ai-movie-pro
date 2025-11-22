@@ -6,18 +6,59 @@
     <title>Rush AI API Documentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Momo+Signature&display=swap" rel="stylesheet">
+    <style>
+        .momo-signature-regular {
+            font-family: "Momo Signature", cursive;
+            font-weight: 400;
+            font-style: normal;
+        }
+    </style>
 </head>
 <body class="bg-gray-900 text-white">
     <!-- Header -->
-    <header class="bg-gradient-to-r from-purple-600 to-blue-600 p-4 shadow-lg">
+    <header class="bg-white p-4 shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <img src="/static/logo.png" alt="Rush AI Logo" class="h-8 w-8 rounded-lg">
-                <h1 class="text-2xl font-bold">Rush AI API Documentation</h1>
+                <h1 class="momo-signature-regular text-4xl text-purple-600">Rush AI</h1>
             </div>
-            <a href="/" class="hover:text-purple-200 transition">
-                <i class="fas fa-home mr-2"></i>Back to Dashboard
-            </a>
+            
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex space-x-4">
+                <a href="/" class="text-gray-800 hover:text-purple-600 transition">Home</a>
+                <a href="/api-keys" class="text-purple-600 hover:text-purple-700 transition font-semibold">
+                    <i class="fas fa-key mr-1"></i>Get API Key
+                </a>
+                <a href="/knowledge-keys" class="text-purple-600 hover:text-purple-700 transition font-semibold">
+                    <i class="fas fa-brain mr-1"></i>Knowledge Keys
+                </a>
+                <a href="/docs" class="text-gray-800 hover:text-purple-600 transition">API Docs</a>
+            </nav>
+            
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn" class="md:hidden text-gray-800 hover:text-purple-600 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <nav class="container mx-auto py-4 space-y-2">
+                <a href="/" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
+                    <i class="fas fa-home mr-2"></i>Home
+                </a>
+                <a href="/api-keys" class="block px-4 py-2 text-purple-600 hover:bg-purple-50 hover:text-purple-700 transition rounded font-semibold">
+                    <i class="fas fa-key mr-2"></i>Get API Key
+                </a>
+                <a href="/knowledge-keys" class="block px-4 py-2 text-purple-600 hover:bg-purple-50 hover:text-purple-700 transition rounded font-semibold">
+                    <i class="fas fa-brain mr-1"></i>Knowledge Keys
+                </a>
+                <a href="/docs" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
+                    <i class="fas fa-book mr-2"></i>API Docs
+                </a>
+            </nav>
         </div>
     </header>
 
@@ -219,6 +260,341 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Knowledge Management API -->
+            <div class="bg-gray-800 rounded-lg p-6 mt-6">
+                <h3 class="text-xl font-bold mb-4">
+                    <i class="fas fa-brain mr-2 text-purple-500"></i>Knowledge Management
+                </h3>
+                <p class="text-gray-300 mb-4">Add, search, and manage knowledge in the AI's shared learning pool.</p>
+                
+                <!-- Add Knowledge -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-2">Add Knowledge</h4>
+                    <div class="mb-4">
+                        <span class="bg-purple-600 px-3 py-1 rounded text-sm">POST</span>
+                        <code class="ml-2">/api/knowledge/add</code>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="font-semibold mb-2">Headers:</h5>
+                        <div class="bg-gray-900 p-4 rounded-lg text-sm">
+                            <code>X-API-Key: your-api-key</code>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="font-semibold mb-2">Body:</h5>
+                        <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                            <pre><code>{
+  "question": "What is the plot of Dune?",
+  "answer": "Dune follows Paul Atreides..."
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Knowledge -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-2">Search Knowledge</h4>
+                    <div class="mb-4">
+                        <span class="bg-purple-600 px-3 py-1 rounded text-sm">GET</span>
+                        <code class="ml-2">/api/knowledge/search</code>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="font-semibold mb-2">Parameters:</h5>
+                        <div class="bg-gray-900 p-4 rounded-lg text-sm">
+                            <code>?q=dune&X-API-Key=your-api-key</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Import Knowledge -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-2">Bulk Import Knowledge</h4>
+                    <div class="mb-4">
+                        <span class="bg-purple-600 px-3 py-1 rounded text-sm">POST</span>
+                        <code class="ml-2">/api/knowledge/import</code>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="font-semibold mb-2">Body:</h5>
+                        <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                            <pre><code>{
+  "knowledge": [
+    {"question": "...", "answer": "..."},
+    {"question": "...", "answer": "..."}
+  ]
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Knowledge Stats -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-2">Get Knowledge Statistics</h4>
+                    <div class="mb-4">
+                        <span class="bg-purple-600 px-3 py-1 rounded text-sm">GET</span>
+                        <code class="ml-2">/api/knowledge/stats</code>
+                    </div>
+                </div>
+
+                <!-- Export Knowledge -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-2">Export All Knowledge</h4>
+                    <div class="mb-4">
+                        <span class="bg-purple-600 px-3 py-1 rounded text-sm">GET</span>
+                        <code class="ml-2">/api/knowledge/export</code>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="font-semibold mb-2">Parameters:</h5>
+                        <div class="bg-gray-900 p-4 rounded-lg text-sm">
+                            <code>?format=json&X-API-Key=your-api-key</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Get All Knowledge -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-2">Get All Knowledge (Paginated)</h4>
+                    <div class="mb-4">
+                        <span class="bg-purple-600 px-3 py-1 rounded text-sm">GET</span>
+                        <code class="ml-2">/api/knowledge/all</code>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="font-semibold mb-2">Parameters:</h5>
+                        <div class="bg-gray-900 p-4 rounded-lg text-sm">
+                            <code>?limit=50&offset=0&X-API-Key=your-api-key</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simple AI Learning -->
+            <div class="bg-gray-800 rounded-lg p-6 mt-6">
+                <h3 class="text-xl font-bold mb-4">
+                    <i class="fas fa-graduation-cap mr-2 text-green-500"></i>Simple AI Learning
+                </h3>
+                <p class="text-gray-300 mb-4">Teach your AI directly - no API key required! Perfect for quick learning.</p>
+                
+                <!-- Direct Learning -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-2">Teach AI Directly</h4>
+                    <div class="mb-4">
+                        <span class="bg-green-600 px-3 py-1 rounded text-sm">POST</span>
+                        <code class="ml-2">/api/learn</code>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="font-semibold mb-2">Body:</h5>
+                        <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                            <pre><code>{
+  "question": "What is the plot of The Matrix?",
+  "answer": "The Matrix follows a computer hacker...",
+  "tags": ["sci-fi", "action"],
+  "source": "my_movie_ai"
+}</code></pre>
+                        </div>
+                    </div>
+                    <div class="bg-green-900 p-3 rounded-lg border border-green-700">
+                        <p class="text-green-200 text-sm">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            <strong>No API Key Required!</strong> Anyone can teach your AI directly.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Auto-Learning -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-2">Auto-Learning</h4>
+                    <p class="text-gray-300 mb-2">Your AI automatically learns from good responses:</p>
+                    <div class="bg-gray-900 p-3 rounded-lg text-sm">
+                        <ul class="list-disc list-inside text-gray-300">
+                            <li>Responses over 50 characters</li>
+                            <li>No error messages</li>
+                            <li>Automatically added to knowledge pool</li>
+                            <li>Source tracked as "auto_learning"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Knowledge API Keys -->
+            <div class="bg-gray-800 rounded-lg p-6 mt-6">
+                <h3 class="text-xl font-bold mb-4">
+                    <i class="fas fa-key mr-2 text-yellow-500"></i>Knowledge API Keys
+                </h3>
+                <p class="text-gray-300 mb-4">Separate API keys specifically for AI learning and knowledge management.</p>
+                
+                <!-- Generate Knowledge Key -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-2">Generate Knowledge Key</h4>
+                    <div class="mb-4">
+                        <span class="bg-yellow-600 px-3 py-1 rounded text-sm">POST</span>
+                        <code class="ml-2">/api/knowledge-keys</code>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="font-semibold mb-2">Body:</h5>
+                        <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                            <pre><code>{
+  "name": "My AI Learning Key",
+  "description": "For training my movie AI"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Learning -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-2">AI Learning Endpoint</h4>
+                    <div class="mb-4">
+                        <span class="bg-green-600 px-3 py-1 rounded text-sm">POST</span>
+                        <code class="ml-2">/api/knowledge/learn</code>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="font-semibold mb-2">Headers:</h5>
+                        <div class="bg-gray-900 p-4 rounded-lg text-sm">
+                            <code>X-Knowledge-Key: rk_your_knowledge_key_here</code>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="font-semibold mb-2">Body:</h5>
+                        <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                            <pre><code>{
+  "question": "What is the plot of Inception?",
+  "answer": "Inception follows a thief who steals information...",
+  "tags": ["sci-fi", "thriller", "nolan"]
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- List Knowledge Keys -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-2">List Knowledge Keys</h4>
+                    <div class="mb-4">
+                        <span class="bg-yellow-600 px-3 py-1 rounded text-sm">GET</span>
+                        <code class="ml-2">/api/knowledge-keys</code>
+                    </div>
+                </div>
+
+                <!-- Knowledge by Source -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-2">Get Knowledge by Source</h4>
+                    <div class="mb-4">
+                        <span class="bg-purple-600 px-3 py-1 rounded text-sm">GET</span>
+                        <code class="ml-2">/api/knowledge/by-source</code>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="font-semibold mb-2">Parameters:</h5>
+                        <div class="bg-gray-900 p-4 rounded-lg text-sm">
+                            <code>?source=knowledge_api</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Features -->
+            <div class="bg-gray-800 rounded-lg p-6 mt-6">
+                <h3 class="text-xl font-bold mb-4">
+                    <i class="fas fa-database mr-2 text-green-500"></i>Database Features
+                </h3>
+                <p class="text-gray-300 mb-4">Persistent knowledge storage with full export capabilities.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-700 p-4 rounded-lg">
+                        <h4 class="font-semibold text-green-400 mb-2">💾 Persistent Storage</h4>
+                        <p class="text-sm text-gray-300">All knowledge stored in SQLite database for permanent retention</p>
+                    </div>
+                    <div class="bg-gray-700 p-4 rounded-lg">
+                        <h4 class="font-semibold text-blue-400 mb-2">📤 Export Capabilities</h4>
+                        <p class="text-sm text-gray-300">Export knowledge as JSON or CSV for use in other AI systems</p>
+                    </div>
+                    <div class="bg-gray-700 p-4 rounded-lg">
+                        <h4 class="font-semibold text-purple-400 mb-2">📊 Usage Analytics</h4>
+                        <p class="text-sm text-gray-300">Track knowledge usage, popularity, and contributor statistics</p>
+                    </div>
+                    <div class="bg-gray-700 p-4 rounded-lg">
+                        <h4 class="font-semibold text-orange-400 mb-2">🔄 Cross-AI Compatible</h4>
+                        <p class="text-sm text-gray-300">Use knowledge in any other AI system you create</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Examples -->
+            <div class="bg-gray-800 rounded-lg p-6 mt-6">
+                <h3 class="text-xl font-bold mb-4">
+                    <i class="fas fa-code mr-2 text-blue-500"></i>Code Examples
+                </h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-semibold text-green-400 mb-2">Python</h4>
+                        <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                            <pre><code>import requests
+
+# AI Chat
+response = requests.post('https://rashai.vercel.app/api/v1/chat', 
+                         json={'message': 'Recommend sci-fi movies'})
+print(response.json())
+
+# Movie Search
+response = requests.get('https://rashai.vercel.app/api/v1/movie-search?q=avatar')
+print(response.json())</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-blue-400 mb-2">JavaScript</h4>
+                        <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                            <pre><code>// AI Chat
+fetch('https://rashai.vercel.app/api/v1/chat', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({message: 'Movie recommendations'})
+}).then(r => r.json()).then(console.log)
+
+// Movie Search
+fetch('https://rashai.vercel.app/api/v1/movie-search?q=inception')
+  .then(r => r.json()).then(console.log)</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-yellow-400 mb-2">cURL</h4>
+                        <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
+                            <pre><code># AI Chat
+curl -X POST https://rashai.vercel.app/api/v1/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Best action movies"}'
+
+# Movie Search
+curl "https://rashai.vercel.app/api/v1/movie-search?q=batman"</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="bg-gray-800 rounded-lg p-6 mt-6">
+                <h3 class="text-xl font-bold mb-4">
+                    <i class="fas fa-star mr-2 text-yellow-500"></i>Key Features
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-700 p-4 rounded-lg">
+                        <h4 class="font-semibold text-blue-400 mb-2">🤖 AI-Powered</h4>
+                        <p class="text-sm text-gray-300">Advanced AI for movie recommendations and insights</p>
+                    </div>
+                    <div class="bg-gray-700 p-4 rounded-lg">
+                        <h4 class="font-semibold text-green-400 mb-2">🎬 TMDB Integration</h4>
+                        <p class="text-sm text-gray-300">Access to comprehensive movie and people database</p>
+                    </div>
+                    <div class="bg-gray-700 p-4 rounded-lg">
+                        <h4 class="font-semibold text-purple-400 mb-2">🧠 Knowledge Sharing</h4>
+                        <p class="text-sm text-gray-300">AI learns from user interactions to improve responses</p>
+                    </div>
+                    <div class="bg-gray-700 p-4 rounded-lg">
+                        <h4 class="font-semibold text-orange-400 mb-2">🚀 Free & Unlimited</h4>
+                        <p class="text-sm text-gray-300">No rate limits or pricing tiers</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Code Examples -->
@@ -300,5 +676,49 @@ curl "https://rashai.vercel.app/api/v1/movie-search?q=batman"</code></pre>
             </div>
         </div>
     </main>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+            
+            // Change icon based on menu state
+            const icon = this.querySelector('i');
+            if (menu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', function() {
+                const menu = document.getElementById('mobileMenu');
+                const btn = document.getElementById('mobileMenuBtn');
+                const icon = btn.querySelector('i');
+                
+                menu.classList.add('hidden');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobileMenu');
+            const btn = document.getElementById('mobileMenuBtn');
+            
+            if (!menu.contains(event.target) && !btn.contains(event.target)) {
+                menu.classList.add('hidden');
+                const icon = btn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+    </script>
 </body>
 </html>

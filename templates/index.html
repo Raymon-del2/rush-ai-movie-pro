@@ -6,7 +6,15 @@
     <title>Rush - AI Movie Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Momo+Signature&display=swap" rel="stylesheet">
     <style>
+        .momo-signature-regular {
+            font-family: "Momo Signature", cursive;
+            font-weight: 400;
+            font-style: normal;
+        }
         .movie-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
@@ -33,19 +41,52 @@
 </head>
 <body class="bg-gray-900 text-white">
     <!-- Header -->
-    <header class="bg-gradient-to-r from-purple-600 to-blue-600 p-4 shadow-lg">
+    <header class="bg-white p-4 shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <img src="/static/logo.png" alt="Rush AI Logo" class="h-8 w-8 rounded-lg">
-                <h1 class="text-2xl font-bold">Rush - AI Movie Pro</h1>
+                <h1 class="momo-signature-regular text-4xl text-purple-600">Rush AI</h1>
             </div>
-            <nav class="flex space-x-4">
-                <a href="#home" class="hover:text-purple-200 transition">Home</a>
-                <a href="#chat" class="hover:text-purple-200 transition">AI Chat</a>
-                <a href="#movies" class="hover:text-purple-200 transition">Movies</a>
-                <a href="#people" class="hover:text-purple-200 transition">People</a>
-                <a href="/api-keys" class="hover:text-purple-200 transition">
+            
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex space-x-4">
+                <a href="#home" class="text-gray-800 hover:text-purple-600 transition">Home</a>
+                <a href="#chat" class="text-gray-800 hover:text-purple-600 transition">AI Chat</a>
+                <a href="#movies" class="text-gray-800 hover:text-purple-600 transition">Movies</a>
+                <a href="#people" class="text-gray-800 hover:text-purple-600 transition">People</a>
+                <a href="/api-keys" class="text-purple-600 hover:text-purple-700 transition font-semibold">
                     <i class="fas fa-key mr-1"></i>Get API Key
+                </a>
+                <a href="/knowledge-keys" class="text-purple-600 hover:text-purple-700 transition font-semibold">
+                    <i class="fas fa-brain mr-1"></i>Knowledge Keys
+                </a>
+            </nav>
+            
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn" class="md:hidden text-gray-800 hover:text-purple-600 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <nav class="container mx-auto py-4 space-y-2">
+                <a href="#home" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
+                    <i class="fas fa-home mr-2"></i>Home
+                </a>
+                <a href="#chat" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
+                    <i class="fas fa-comments mr-2"></i>AI Chat
+                </a>
+                <a href="#movies" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
+                    <i class="fas fa-film mr-2"></i>Movies
+                </a>
+                <a href="#people" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
+                    <i class="fas fa-users mr-2"></i>People
+                </a>
+                <a href="/api-keys" class="block px-4 py-2 text-purple-600 hover:bg-purple-50 hover:text-purple-700 transition rounded font-semibold">
+                    <i class="fas fa-key mr-2"></i>Get API Key
+                </a>
+                <a href="/knowledge-keys" class="block px-4 py-2 text-purple-600 hover:bg-purple-50 hover:text-purple-700 transition rounded font-semibold">
+                    <i class="fas fa-brain mr-2"></i>Knowledge Keys
                 </a>
             </nav>
         </div>
@@ -159,7 +200,7 @@
 
     <!-- Footer -->
     <footer class="bg-gray-800 p-4 text-center text-gray-400">
-        <p>&copy; 2025 Rush - AI Movie Pro. Powered by Ollama & TMDB</p>
+        <p>&copy; 2025 Rush - AI Movie Pro</p>
     </footer>
 
     <!-- Movie Detail Modal -->
@@ -488,40 +529,11 @@
         function generatePoster(query) {
             const posterSection = document.getElementById('posterSection');
             const posterContent = document.getElementById('posterContent');
-            const socialMediaSection = document.getElementById('socialMediaSection');
             
-            // Show loading state
             if (posterSection) {
                 posterSection.classList.remove('hidden');
-                posterContent.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating poster description...';
+                posterContent.innerHTML = '<i class="fas fa-tools mr-2"></i>Feature Coming Soon! 🚧<br><span class="text-sm text-gray-400">We\'re working on bringing you amazing AI-generated poster descriptions. Stay tuned!</span>';
             }
-            
-            fetch('/api/generate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ type: 'poster', query: query })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => {
-                        throw new Error(err.error || 'Server error');
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (posterSection && posterContent) {
-                    posterContent.innerHTML = data.response.replace(/\n/g, '<br>');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                if (posterSection && posterContent) {
-                    posterContent.innerHTML = `Failed to generate poster: ${error.message}. Please try again.`;
-                }
-            });
         }
         
         function generateSocialMedia(query) {
@@ -575,6 +587,55 @@
         
         // Search on Enter key
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+        
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+            
+            // Change icon based on menu state
+            const icon = this.querySelector('i');
+            if (menu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', function() {
+                const menu = document.getElementById('mobileMenu');
+                const btn = document.getElementById('mobileMenuBtn');
+                const icon = btn.querySelector('i');
+                
+                menu.classList.add('hidden');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobileMenu');
+            const btn = document.getElementById('mobileMenuBtn');
+            
+            if (!menu.contains(event.target) && !btn.contains(event.target)) {
+                menu.classList.add('hidden');
+                const icon = btn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Search functionality
+        document.getElementById('searchForm').addEventListener('submit', async function(e) {
             if (e.key === 'Enter') {
                 performSearch();
             }

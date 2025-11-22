@@ -5,8 +5,15 @@ from datetime import datetime
 import os
 from config import Config
 from models import api_key_manager
+from database import knowledge_db
 
-app = Flask(__name__, static_folder='static', static_url_path='/static')
+# Get the directory where this file is located
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+app = Flask(__name__, 
+           static_folder=os.path.join(basedir, 'static'), 
+           static_url_path='/static',
+           template_folder=os.path.join(basedir, 'templates'))
 app.config.from_object(Config)
 
 class TMDBService:
@@ -78,45 +85,50 @@ class TMDBService:
         return response.json()
 
 class AIService:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(AIService, cls).__new__(cls)
+        return cls._instance
+
     def __init__(self):
-        self.shared_knowledge = {}  # Store shared knowledge
-    
+        if not hasattr(self, 'initialized'):
+            self.initialized = True
+
     @staticmethod
     def get_instance():
         """Get singleton instance"""
-        if not hasattr(AIService, '_instance'):
-            AIService._instance = AIService()
-        return AIService._instance
-    
-    @staticmethod
-    def get_provider():
-        """Get the current AI provider from configuration"""
-        return app.config.get('AI_PROVIDER', 'ollama')
-    
-    def add_shared_knowledge(self, question, answer, api_key=None):
-        """Add knowledge to the shared pool"""
-        knowledge_id = hashlib.md5(f"{question}_{answer}".encode()).hexdigest()
-        self.shared_knowledge[knowledge_id] = {
-            'question': question,
-            'answer': answer,
-            'api_key': api_key,
-            'timestamp': datetime.utcnow().isoformat(),
-            'uses': 0
-        }
-    
+        return AIService()
+
+    def add_shared_knowledge(self, question, answer, api_key):
+        """Add knowledge to shared pool using database"""
+        try:
+            knowledge_db.add_knowledge(question, answer, api_key)
+        except Exception as e:
+            print(f"Error adding knowledge to database: {e}")
+
     def get_shared_knowledge(self, question):
-        """Get relevant knowledge from shared pool"""
-        relevant = []
-        for kid, knowledge in self.shared_knowledge.items():
-            if any(word.lower() in knowledge['question'].lower() for word in question.lower().split() if len(word) > 3):
-                knowledge['uses'] += 1
-                relevant.append(knowledge['answer'])
-        return relevant
-    
+        """Get relevant knowledge from database"""
+        try:
+            # Search for relevant knowledge
+            relevant_knowledge = knowledge_db.search_knowledge(question, limit=3)
+
+            # Update usage count for found knowledge
+            for knowledge in relevant_knowledge:
+                knowledge_db.update_knowledge_uses(knowledge['question'])
+
+            # Return just the answers
+            return [k['answer'] for k in relevant_knowledge]
+        except Exception as e:
+            print(f"Error retrieving knowledge from database: {e}")
+            return []
+
     def generate_response(self, prompt, context="", api_key=None):
         """Generate AI response using the configured provider with shared knowledge"""
         try:
             provider = self.get_provider()
+
             
             # Check shared knowledge first
             shared_answers = self.get_shared_knowledge(prompt)
@@ -132,9 +144,10 @@ class AIService:
             else:
                 response = self._generate_ollama_response(prompt, context, shared_answers)
             
-            # Add good responses to shared knowledge
-            if api_key and len(response) > 50 and "Error" not in response:
-                self.add_shared_knowledge(prompt, response, api_key)
+            # Auto-learn from good responses (no API key required)
+            if len(response) > 50 and "Error" not in response and "API error" not in response:
+                # Add to shared knowledge automatically
+                self.add_shared_knowledge(prompt, response, api_key or "auto_learning")
             
             return response
             
@@ -613,6 +626,397 @@ def rush_ai_people_search():
             'tier': key_data['tier']
         }
     })
+
+@app.route('/knowledge-keys')
+def knowledge_keys_page():
+    """Knowledge API keys management page"""
+    return render_template('knowledge_keys.html')
+
+@app.route('/api/learn', methods=['POST'])
+def api_simple_learn():
+    """Simple AI learning endpoint - no API key required"""
+    try:
+        # Get learning data
+        data = request.get_json()
+        if not data or 'question' not in data or 'answer' not in data:
+            return jsonify({'error': 'Question and answer are required'}), 400
+        
+        question = data['question'].strip()
+        answer = data['answer'].strip()
+        tags = data.get('tags', [])
+        source = data.get('source', 'direct_api')
+        
+        if len(question) < 5 or len(answer) < 20:
+            return jsonify({'error': 'Question must be at least 5 chars, answer at least 20 chars'}), 400
+        
+        # Add knowledge directly (no API key validation)
+        knowledge_id = knowledge_db.add_knowledge(question, answer, source, tags)
+        
+        return jsonify({
+            'success': True,
+            'knowledge_id': knowledge_id,
+            'question': question,
+            'answer_length': len(answer),
+            'message': 'AI learned successfully!',
+            'source': source
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'Learning failed: {str(e)}'}), 500
+
+@app.route('/api/knowledge-keys', methods=['POST'])
+def api_generate_knowledge_key():
+    """Generate a new knowledge API key"""
+    try:
+        data = request.get_json() or {}
+        name = data.get('name', 'Knowledge API Key')
+        description = data.get('description', 'API key for AI learning')
+        
+        # Generate knowledge key
+        key = knowledge_db.generate_knowledge_key(name, description)
+        
+        return jsonify({
+            'success': True,
+            'knowledge_key': key,
+            'name': name,
+            'description': description,
+            'message': 'Knowledge API key generated successfully'
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'Failed to generate knowledge key: {str(e)}'}), 500
+
+@app.route('/api/knowledge-keys', methods=['GET'])
+def api_list_knowledge_keys():
+    """List all knowledge API keys"""
+    try:
+        keys = knowledge_db.get_knowledge_keys()
+        
+        return jsonify({
+            'success': True,
+            'keys': keys,
+            'total': len(keys)
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'Failed to list knowledge keys: {str(e)}'}), 500
+
+@app.route('/api/knowledge-keys/<key>', methods=['DELETE'])
+def api_deactivate_knowledge_key(key):
+    """Deactivate or permanently delete a knowledge API key"""
+    try:
+        # Check if this is a permanent delete request
+        permanent_delete = request.headers.get('X-Permanent-Delete') == 'true'
+        
+        if permanent_delete:
+            # Permanently delete the key from database
+            conn = knowledge_db.get_connection()
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM knowledge_keys WHERE knowledge_key = ?', (key,))
+            conn.commit()
+            conn.close()
+            
+            return jsonify({
+                'success': True,
+                'message': 'Knowledge API key deleted permanently'
+            })
+        else:
+            # Just deactivate (soft delete)
+            knowledge_db.deactivate_knowledge_key(key)
+            
+            return jsonify({
+                'success': True,
+                'message': 'Knowledge API key deactivated successfully'
+            })
+        
+    except Exception as e:
+        return jsonify({'error': f'Failed to process key: {str(e)}'}), 500
+
+@app.route('/api/knowledge/learn', methods=['POST'])
+def api_knowledge_learn():
+    """AI learning endpoint using knowledge API key"""
+    try:
+        # Get knowledge key from header
+        knowledge_key = request.headers.get('X-Knowledge-Key')
+        if not knowledge_key:
+            return jsonify({'error': 'Knowledge API key required'}), 401
+        
+        # Validate knowledge key
+        if not knowledge_db.validate_knowledge_key(knowledge_key):
+            return jsonify({'error': 'Invalid or inactive knowledge API key'}), 401
+        
+        # Get learning data
+        data = request.get_json()
+        if not data or 'question' not in data or 'answer' not in data:
+            return jsonify({'error': 'Question and answer are required'}), 400
+        
+        question = data['question'].strip()
+        answer = data['answer'].strip()
+        tags = data.get('tags', [])
+        
+        if len(question) < 5 or len(answer) < 20:
+            return jsonify({'error': 'Question must be at least 5 chars, answer at least 20 chars'}), 400
+        
+        # Add knowledge using knowledge key
+        knowledge_id = knowledge_db.add_knowledge_with_key(question, answer, knowledge_key, tags)
+        
+        return jsonify({
+            'success': True,
+            'knowledge_id': knowledge_id,
+            'question': question,
+            'answer_length': len(answer),
+            'message': 'AI learned successfully!'
+        })
+        
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 401
+    except Exception as e:
+        return jsonify({'error': f'Learning failed: {str(e)}'}), 500
+
+@app.route('/api/knowledge/by-source', methods=['GET'])
+def api_knowledge_by_source():
+    """Get knowledge filtered by source type"""
+    try:
+        source_type = request.args.get('source', 'all')
+        if source_type not in ['all', 'knowledge_api']:
+            source_type = 'all'
+        
+        knowledge = knowledge_db.get_knowledge_by_source(source_type)
+        
+        return jsonify({
+            'success': True,
+            'source_type': source_type,
+            'knowledge': knowledge,
+            'total': len(knowledge)
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'Failed to get knowledge: {str(e)}'}), 500
+
+@app.route('/api/knowledge/add', methods=['POST'])
+def api_add_knowledge():
+    """Add knowledge to the shared pool (requires API key)"""
+    try:
+        # Get API key from header
+        api_key = request.headers.get('X-API-Key')
+        if not api_key:
+            return jsonify({'error': 'API key required'}), 401
+        
+        # Validate API key
+        key_data = api_key_manager.get_key(api_key)
+        if not key_data:
+            return jsonify({'error': 'Invalid API key'}), 401
+        
+        # Get knowledge data
+        data = request.get_json()
+        if not data or 'question' not in data or 'answer' not in data:
+            return jsonify({'error': 'Question and answer are required'}), 400
+        
+        question = data['question'].strip()
+        answer = data['answer'].strip()
+        
+        if len(question) < 5 or len(answer) < 20:
+            return jsonify({'error': 'Question must be at least 5 chars, answer at least 20 chars'}), 400
+        
+        # Add to shared knowledge
+        ai_service = AIService.get_instance()
+        ai_service.add_shared_knowledge(question, answer, api_key)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Knowledge added successfully',
+            'question': question,
+            'answer_length': len(answer)
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'Failed to add knowledge: {str(e)}'}), 500
+
+@app.route('/api/knowledge/search', methods=['GET'])
+def api_search_knowledge():
+    """Search the shared knowledge pool (requires API key)"""
+    try:
+        # Get API key from header
+        api_key = request.headers.get('X-API-Key')
+        if not api_key:
+            return jsonify({'error': 'API key required'}), 401
+        
+        # Validate API key
+        key_data = api_key_manager.get_key(api_key)
+        if not key_data:
+            return jsonify({'error': 'Invalid API key'}), 401
+        
+        # Get search query
+        query = request.args.get('q', '').strip()
+        if len(query) < 3:
+            return jsonify({'error': 'Query must be at least 3 characters'}), 400
+        
+        # Search knowledge
+        ai_service = AIService.get_instance()
+        shared_knowledge = ai_service.get_shared_knowledge(query)
+        
+        return jsonify({
+            'query': query,
+            'results_count': len(shared_knowledge),
+            'knowledge': shared_knowledge[:10]  # Limit to 10 results
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'Failed to search knowledge: {str(e)}'}), 500
+
+@app.route('/api/knowledge/import', methods=['POST'])
+def api_import_knowledge():
+    """Bulk import knowledge (requires API key)"""
+    try:
+        # Get API key from header
+        api_key = request.headers.get('X-API-Key')
+        if not api_key:
+            return jsonify({'error': 'API key required'}), 401
+        
+        # Validate API key
+        key_data = api_key_manager.get_key(api_key)
+        if not key_data:
+            return jsonify({'error': 'Invalid API key'}), 401
+        
+        # Get knowledge data
+        data = request.get_json()
+        if not data or 'knowledge' not in data:
+            return jsonify({'error': 'Knowledge array is required'}), 400
+        
+        knowledge_items = data['knowledge']
+        if not isinstance(knowledge_items, list):
+            return jsonify({'error': 'Knowledge must be an array'}), 400
+        
+        if len(knowledge_items) > 100:  # Limit bulk imports
+            return jsonify({'error': 'Maximum 100 items per bulk import'}), 400
+        
+        # Validate and import each item
+        ai_service = AIService.get_instance()
+        imported = 0
+        failed = 0
+        
+        for item in knowledge_items:
+            if not isinstance(item, dict) or 'question' not in item or 'answer' not in item:
+                failed += 1
+                continue
+            
+            question = str(item['question']).strip()
+            answer = str(item['answer']).strip()
+            
+            if len(question) >= 5 and len(answer) >= 20:
+                ai_service.add_shared_knowledge(question, answer, api_key)
+                imported += 1
+            else:
+                failed += 1
+        
+        return jsonify({
+            'success': True,
+            'imported': imported,
+            'failed': failed,
+            'total': len(knowledge_items)
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'Failed to import knowledge: {str(e)}'}), 500
+
+@app.route('/api/knowledge/stats', methods=['GET'])
+def api_knowledge_stats():
+    """Get knowledge pool statistics (requires API key)"""
+    try:
+        # Get API key from header
+        api_key = request.headers.get('X-API-Key')
+        if not api_key:
+            return jsonify({'error': 'API key required'}), 401
+        
+        # Validate API key
+        key_data = api_key_manager.get_key(api_key)
+        if not key_data:
+            return jsonify({'error': 'Invalid API key'}), 401
+        
+        # Get stats from database
+        stats = knowledge_db.get_statistics()
+        
+        return jsonify({
+            'total_knowledge_items': stats['total_knowledge'],
+            'total_uses': stats['total_uses'],
+            'contributors': stats['contributors'],
+            'average_quality': stats['average_quality'],
+            'api_key_requests': key_data['requests_used']
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'Failed to get stats: {str(e)}'}), 500
+
+@app.route('/api/knowledge/export', methods=['GET'])
+def api_export_knowledge():
+    """Export all knowledge (requires API key)"""
+    try:
+        # Get API key from header
+        api_key = request.headers.get('X-API-Key')
+        if not api_key:
+            return jsonify({'error': 'API key required'}), 401
+        
+        # Validate API key
+        key_data = api_key_manager.get_key(api_key)
+        if not key_data:
+            return jsonify({'error': 'Invalid API key'}), 401
+        
+        # Get export format
+        export_format = request.args.get('format', 'json').lower()
+        if export_format not in ['json', 'csv']:
+            export_format = 'json'
+        
+        # Export knowledge
+        exported_data = knowledge_db.export_knowledge(export_format)
+        
+        if export_format == 'json':
+            return jsonify({
+                'success': True,
+                'data': json.loads(exported_data),
+                'total_items': len(json.loads(exported_data))
+            })
+        else:
+            return exported_data, 200, {
+                'Content-Type': 'text/csv',
+                'Content-Disposition': 'attachment; filename=rush_ai_knowledge.csv'
+            }
+        
+    except Exception as e:
+        return jsonify({'error': f'Failed to export knowledge: {str(e)}'}), 500
+
+@app.route('/api/knowledge/all', methods=['GET'])
+def api_get_all_knowledge():
+    """Get all knowledge with pagination (requires API key)"""
+    try:
+        # Get API key from header
+        api_key = request.headers.get('X-API-Key')
+        if not api_key:
+            return jsonify({'error': 'API key required'}), 401
+        
+        # Validate API key
+        key_data = api_key_manager.get_key(api_key)
+        if not key_data:
+            return jsonify({'error': 'Invalid API key'}), 401
+        
+        # Get pagination parameters
+        limit = int(request.args.get('limit', 50))
+        offset = int(request.args.get('offset', 0))
+        
+        if limit > 100:
+            limit = 100  # Maximum limit
+        
+        # Get knowledge
+        knowledge = knowledge_db.get_all_knowledge(limit=limit, offset=offset)
+        
+        return jsonify({
+            'knowledge': knowledge,
+            'limit': limit,
+            'offset': offset,
+            'total': len(knowledge)
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'Failed to get knowledge: {str(e)}'}), 500
 
 @app.route('/api-keys', methods=['GET', 'POST'])
 def manage_api_keys():

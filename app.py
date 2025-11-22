@@ -115,12 +115,12 @@ class AIService:
     
     def generate_response(self, prompt, context="", api_key=None):
         """Generate AI response using the configured provider with shared knowledge"""
-        provider = self.get_provider()
-        
-        # Check shared knowledge first
-        shared_answers = self.get_shared_knowledge(prompt)
-        
         try:
+            provider = self.get_provider()
+            
+            # Check shared knowledge first
+            shared_answers = self.get_shared_knowledge(prompt)
+            
             if provider == 'openai':
                 response = self._generate_openai_response(prompt, context, shared_answers)
             elif provider == 'anthropic':
@@ -139,7 +139,7 @@ class AIService:
             return response
             
         except Exception as e:
-            return f"AI Error with {provider}: {str(e)}"
+            return f"AI Error: {str(e)}"
     
     def _generate_ollama_response(self, prompt, context="", shared_answers=[]):
         """Generate response using Ollama"""
@@ -276,11 +276,6 @@ class AIService:
     
     def _generate_custom_response(self, prompt, context="", shared_answers=[]):
         """Generate response using custom API"""
-        # Debug: Print configuration values
-        print(f"DEBUG - CUSTOM_API_KEY: {app.config.get('CUSTOM_API_KEY', 'NOT_SET')[:20]}...")
-        print(f"DEBUG - CUSTOM_BASE_URL: {app.config.get('CUSTOM_BASE_URL', 'NOT_SET')}")
-        print(f"DEBUG - CUSTOM_MODEL: {app.config.get('CUSTOM_MODEL', 'NOT_SET')}")
-        
         if not app.config.get('CUSTOM_API_KEY') or app.config.get('CUSTOM_API_KEY') == 'gsk_YourGroqAPIKeyHere' or not app.config.get('CUSTOM_API_KEY').startswith('gsk_'):
             # Fallback response when no API key is configured
             return f"I'm Rush AI! I can help you find movies and celebrities. Try searching for movies like 'Avatar' or people like 'Tom Cruise'. For personalized AI responses, configure a Groq API key in your settings. Your question was: {prompt[:100]}..."
@@ -308,10 +303,13 @@ class AIService:
                                headers=headers, json=payload, timeout=30)
         
         if response.status_code == 200:
-            result = response.json()
-            return result['choices'][0]['message']['content']
+            try:
+                result = response.json()
+                return result['choices'][0]['message']['content']
+            except (KeyError, IndexError, ValueError) as e:
+                return f"Custom API response error: Invalid response format"
         else:
-            return f"Custom API error: {response.status_code}"
+            return f"Custom API error: {response.status_code} - {response.text[:100]}"
 
 @app.route('/')
 def index():

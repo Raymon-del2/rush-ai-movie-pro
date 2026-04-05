@@ -4,237 +4,323 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Get Your Rush AI API Key</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Momo+Signature&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
     <style>
-        .momo-signature-regular {
-            font-family: "Momo Signature", cursive;
-            font-weight: 400;
-            font-style: normal;
+        .page-content {
+            padding-top: 100px;
+            min-height: 100vh;
+        }
+        .api-card {
+            background: var(--apple-surface);
+            border-radius: var(--apple-radius-lg);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--apple-border);
+        }
+        .api-card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .info-box {
+            background: rgba(41, 151, 255, 0.1);
+            border: 1px solid rgba(41, 151, 255, 0.3);
+            border-radius: var(--apple-radius);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .info-box-title {
+            color: var(--apple-accent);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .info-box ul {
+            margin: 0;
+            padding-left: 1.25rem;
+            font-size: 0.875rem;
+            color: var(--apple-text-secondary);
+        }
+        .info-box li {
+            margin-bottom: 0.25rem;
+        }
+        .free-box {
+            background: rgba(48, 209, 88, 0.1);
+            border: 1px solid rgba(48, 209, 88, 0.3);
+            border-radius: var(--apple-radius);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .generate-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--apple-gradient);
+            border: none;
+            border-radius: var(--apple-radius);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .generate-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(41, 151, 255, 0.3);
+        }
+        .api-key-display {
+            background: var(--apple-bg);
+            padding: 1rem;
+            border-radius: var(--apple-radius);
+            font-family: monospace;
+            word-break: break-all;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+        .warning-box {
+            background: rgba(255, 159, 10, 0.1);
+            border: 1px solid rgba(255, 159, 10, 0.3);
+            border-radius: var(--apple-radius);
+            padding: 0.75rem;
+            font-size: 0.8125rem;
+            color: var(--apple-warning);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--apple-text-secondary);
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--apple-bg);
+            border: 1px solid var(--apple-border);
+            border-radius: var(--apple-radius);
+            color: var(--apple-text);
+            font-size: 0.9375rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+        .form-input:focus {
+            border-color: var(--apple-accent);
+        }
+        .check-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--apple-success);
+            border: none;
+            border-radius: var(--apple-radius);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .check-btn:hover {
+            opacity: 0.9;
+        }
+        .code-block {
+            background: var(--apple-bg);
+            padding: 1rem;
+            border-radius: var(--apple-radius);
+            font-family: monospace;
+            font-size: 0.8125rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        .status-message {
+            padding: 1rem;
+            border-radius: var(--apple-radius);
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        .status-message.success {
+            background: rgba(48, 209, 88, 0.1);
+            border: 1px solid rgba(48, 209, 88, 0.3);
+            color: var(--apple-success);
+            display: block;
+        }
+        .status-message.error {
+            background: rgba(255, 69, 58, 0.1);
+            border: 1px solid rgba(255, 69, 58, 0.3);
+            color: var(--apple-danger);
+            display: block;
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white">
+<body>
     <!-- Header -->
-    <header class="bg-white p-4 shadow-lg">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <h1 class="momo-signature-regular text-4xl text-purple-600">Rush AI</h1>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-film"></i>
+                </div>
+                <span class="logo-text">Rush <span class="logo-accent">AI</span></span>
             </div>
             
-            <!-- Desktop Navigation -->
-            <nav class="hidden md:flex space-x-4">
-                <a href="/" class="text-gray-800 hover:text-purple-600 transition">Home</a>
-                <a href="/api-keys" class="text-purple-600 hover:text-purple-700 transition font-semibold">
-                    <i class="fas fa-key mr-1"></i>Get API Key
-                </a>
-                <a href="/knowledge-keys" class="text-purple-600 hover:text-purple-700 transition font-semibold">
-                    <i class="fas fa-brain mr-1"></i>Knowledge Keys
-                </a>
-                <a href="/docs" class="text-gray-800 hover:text-purple-600 transition">API Docs</a>
+            <nav class="nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/api-keys" class="nav-link active">API Key</a>
+                <a href="/knowledge-keys" class="nav-link">Knowledge</a>
+                <a href="/docs" class="nav-link">Docs</a>
             </nav>
             
-            <!-- Mobile Menu Button -->
-            <button id="mobileMenuBtn" class="md:hidden text-gray-800 hover:text-purple-600 focus:outline-none">
-                <i class="fas fa-bars text-2xl"></i>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
             </button>
         </div>
         
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-200">
-            <nav class="container mx-auto py-4 space-y-2">
-                <a href="/" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
-                    <i class="fas fa-home mr-2"></i>Home
-                </a>
-                <a href="/api-keys" class="block px-4 py-2 text-purple-600 hover:bg-purple-50 hover:text-purple-700 transition rounded font-semibold">
-                    <i class="fas fa-key mr-2"></i>Get API Key
-                </a>
-                <a href="/knowledge-keys" class="block px-4 py-2 text-purple-600 hover:bg-purple-50 hover:text-purple-700 transition rounded font-semibold">
-                    <i class="fas fa-brain mr-2"></i>Knowledge Keys
-                </a>
-                <a href="/docs" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
-                    <i class="fas fa-book mr-2"></i>API Docs
-                </a>
-            </nav>
-        </div>
+        <nav class="mobile-nav" id="mobileNav">
+            <a href="/" class="mobile-nav-link">Home</a>
+            <a href="/api-keys" class="mobile-nav-link">Get API Key</a>
+            <a href="/knowledge-keys" class="mobile-nav-link">Knowledge Keys</a>
+            <a href="/docs" class="mobile-nav-link">API Docs</a>
+        </nav>
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto p-4 max-w-4xl">
-        <!-- API Key Generation -->
-        <div class="bg-gray-800 rounded-lg p-6 mb-6">
-            <h2 class="text-2xl font-bold mb-4">
-                <i class="fas fa-rocket mr-2 text-blue-500"></i>Get Your Rush AI API Key
-            </h2>
-            
-            <div class="mb-6 p-4 bg-blue-900 rounded-lg border border-blue-700">
-                <h3 class="text-lg font-semibold mb-2 text-blue-300">
-                    <i class="fas fa-star mr-2"></i>What You Can Do With Rush AI API:
-                </h3>
-                <ul class="list-disc list-inside space-y-1 text-sm text-blue-200">
-                    <li><strong>AI Chat:</strong> Movie recommendations, actor insights, film analysis</li>
-                    <li><strong>Movie Search:</strong> Access TMDB database with AI-enhanced results</li>
-                    <li><strong>People Search:</strong> Find actors, directors, and celebrity information</li>
-                    <li><strong>Poster Generation:</strong> AI-generated movie poster descriptions</li>
-                    <li><strong>Social Media Data:</strong> Actor social media information and web presence</li>
-                </ul>
-            </div>
+    <main class="main">
+        <div class="container">
+            <div class="page-content">
+                <!-- Status Message -->
+                <div id="statusMessage" class="status-message"></div>
 
-            <form id="apiKeyForm" class="space-y-6">
-                <div class="bg-green-900 p-4 rounded-lg border border-green-700">
-                    <h3 class="text-lg font-semibold mb-2 text-green-300">
-                        <i class="fas fa-gift mr-2"></i>Free & Unlimited Access!
+                <!-- API Key Generation -->
+                <div class="api-card">
+                    <h2 class="api-card-title">
+                        <i class="fas fa-rocket" style="color: var(--apple-accent);"></i>
+                        Get Your Rush AI API Key
+                    </h2>
+                    
+                    <div class="info-box">
+                        <h3 class="info-box-title"><i class="fas fa-star"></i> What You Can Do With Rush AI API:</h3>
+                        <ul>
+                            <li><strong>AI Chat:</strong> Movie recommendations, actor insights, film analysis</li>
+                            <li><strong>Movie Search:</strong> Access TMDB database with AI-enhanced results</li>
+                            <li><strong>People Search:</strong> Find actors, directors, and celebrity information</li>
+                            <li><strong>Poster Generation:</strong> AI-generated movie poster descriptions</li>
+                            <li><strong>Social Media Data:</strong> Actor social media information and web presence</li>
+                        </ul>
+                    </div>
+
+                    <div class="free-box">
+                        <h3 class="info-box-title" style="color: var(--apple-success);">
+                            <i class="fas fa-gift"></i> Free & Unlimited Access!
+                        </h3>
+                        <p style="font-size: 0.875rem; color: var(--apple-text-secondary);">
+                            Rush AI API is completely free with unlimited requests. Build your movie apps without limits!
+                        </p>
+                    </div>
+
+                    <form id="apiKeyForm">
+                        <button type="submit" class="generate-btn">
+                            <i class="fas fa-key"></i> Generate My Free Rush AI API Key
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Generated API Key Display -->
+                <div id="apiKeyResult" class="api-card hidden">
+                    <h3 class="api-card-title">
+                        <i class="fas fa-check-circle" style="color: var(--apple-success);"></i>
+                        Your Rush AI API Key
                     </h3>
-                    <p class="text-sm text-green-200">
-                        Rush AI API is completely free with unlimited requests. Build your movie apps without limits!
-                    </p>
+                    <div class="api-key-display" id="apiKeyDisplay"></div>
+                    <div class="warning-box">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Important:</strong> Save this API key securely! You won't be able to see it again.
+                    </div>
                 </div>
 
-                <button type="submit" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition">
-                    <i class="fas fa-key mr-2"></i>Generate My Free Rush AI API Key
-                </button>
-            </form>
-        </div>
-
-        <!-- Generated API Key Display -->
-        <div id="apiKeyResult" class="hidden bg-gray-800 rounded-lg p-6 mb-6">
-            <h3 class="text-xl font-bold mb-4">
-                <i class="fas fa-check-circle mr-2 text-green-500"></i>Your Rush AI API Key
-            </h3>
-            <div class="bg-gray-700 p-4 rounded-lg font-mono text-sm break-all mb-4" id="apiKeyDisplay"></div>
-            <div class="bg-yellow-900 p-3 rounded-lg border border-yellow-700">
-                <p class="text-sm text-yellow-200">
-                    <i class="fas fa-exclamation-triangle mr-2"></i>
-                    <strong>Important:</strong> Save this API key securely! You won't be able to see it again.
-                </p>
-            </div>
-        </div>
-
-        <!-- API Usage Check -->
-        <div class="bg-gray-800 rounded-lg p-6 mb-6">
-            <h3 class="text-xl font-bold mb-4">
-                <i class="fas fa-chart-line mr-2 text-blue-500"></i>Check Your API Usage
-            </h3>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium mb-2">Your API Key</label>
-                    <input type="password" id="usageApiKey" placeholder="rush_..." 
-                           class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
+                <!-- API Usage Check -->
+                <div class="api-card">
+                    <h3 class="api-card-title">
+                        <i class="fas fa-chart-line" style="color: var(--apple-accent);"></i>
+                        Check Your API Usage
+                    </h3>
+                    <div class="form-group">
+                        <label class="form-label">Your API Key</label>
+                        <input type="password" id="usageApiKey" class="form-input" placeholder="rush_...">
+                    </div>
+                    <button onclick="checkUsage()" class="check-btn">
+                        <i class="fas fa-search"></i> Check Usage
+                    </button>
+                    <div id="usageResult" class="hidden" style="margin-top: 1rem;"></div>
                 </div>
-                <button onclick="checkUsage()" class="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold transition">
-                    <i class="fas fa-search mr-2"></i>Check Usage
-                </button>
-                <div id="usageResult" class="hidden bg-gray-700 p-4 rounded-lg"></div>
-            </div>
-        </div>
 
-        <!-- API Documentation -->
-        <div class="bg-gray-800 rounded-lg p-6">
-            <h3 class="text-xl font-bold mb-4">
-                <i class="fas fa-book mr-2 text-blue-500"></i>Quick Start Guide
-            </h3>
-            <div class="space-y-4">
-                <div>
-                    <h4 class="font-semibold text-green-400 mb-2">1. AI Chat API</h4>
-                    <div class="bg-gray-900 p-3 rounded-lg text-sm">
-                        <pre><code>POST /api/v1/chat
+                <!-- API Documentation -->
+                <div class="api-card">
+                    <h3 class="api-card-title">
+                        <i class="fas fa-book" style="color: var(--apple-accent);"></i>
+                        Quick Start Guide
+                    </h3>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <h4 style="color: var(--apple-success); font-weight: 600; margin-bottom: 0.5rem;">1. AI Chat API</h4>
+                        <div class="code-block">
+POST /api/v1/chat<br>
+Headers: X-API-Key: your_api_key_here<br>
+Body: {"message": "What movies are similar to Inception?"}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <h4 style="color: var(--apple-accent); font-weight: 600; margin-bottom: 0.5rem;">2. Movie Search API</h4>
+                        <div class="code-block">
+GET /api/v1/movie-search?q=avatar<br>
 Headers: X-API-Key: your_api_key_here
-Body: {"message": "What movies are similar to Inception?"}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <h4 style="color: #9d50bb; font-weight: 600; margin-bottom: 0.5rem;">3. People Search API</h4>
+                        <div class="code-block">
+GET /api/v1/people-search?q=tom+cruise<br>
+Headers: X-API-Key: your_api_key_here
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 1.5rem;">
+                        <a href="/docs" style="color: var(--apple-accent); text-decoration: none;">
+                            <i class="fas fa-book-open"></i> View Full API Documentation
+                        </a>
                     </div>
                 </div>
-                <div>
-                    <h4 class="font-semibold text-blue-400 mb-2">2. Movie Search API</h4>
-                    <div class="bg-gray-900 p-3 rounded-lg text-sm">
-                        <pre><code>GET /api/v1/movie-search?q=avatar
-Headers: X-API-Key: your_api_key_here</code></pre>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-purple-400 mb-2">3. People Search API</h4>
-                    <div class="bg-gray-900 p-3 rounded-lg text-sm">
-                        <pre><code>GET /api/v1/people-search?q=tom+cruise
-Headers: X-API-Key: your_api_key_here</code></pre>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-4 text-center">
-                <a href="/docs" class="text-blue-400 hover:text-blue-300 underline">
-                    <i class="fas fa-book-open mr-2"></i>View Full API Documentation
-                </a>
             </div>
         </div>
     </main>
 
     <script>
-        // Mobile menu toggle
-        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
-            
-            // Change icon based on menu state
-            const icon = this.querySelector('i');
-            if (menu.classList.contains('hidden')) {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            } else {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            }
-        });
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mobileNav');
+            nav.classList.toggle('active');
+            const btn = document.querySelector('.mobile-menu-btn i');
+            btn.classList.toggle('fa-bars');
+            btn.classList.toggle('fa-times');
+        }
 
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('#mobileMenu a').forEach(link => {
-            link.addEventListener('click', function() {
-                const menu = document.getElementById('mobileMenu');
-                const btn = document.getElementById('mobileMenuBtn');
-                const icon = btn.querySelector('i');
-                
-                menu.classList.add('hidden');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            });
-        });
-
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('mobileMenu');
-            const btn = document.getElementById('mobileMenuBtn');
-            
-            if (!menu.contains(event.target) && !btn.contains(event.target)) {
-                menu.classList.add('hidden');
-                const icon = btn.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        });
-
-        // Generate API key
         document.getElementById('apiKeyForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             try {
                 const response = await fetch('/api-keys', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ tier: 'free' })
                 });
                 
                 const result = await response.json();
                 
                 if (response.ok) {
-                    // Display the API key
                     document.getElementById('apiKeyDisplay').textContent = result.api_key;
                     document.getElementById('apiKeyResult').classList.remove('hidden');
-                    
-                    // Show success message
                     showStatus('Free API key generated successfully! Start building your movie apps now!', 'success');
-                    
-                    // Scroll to result
                     document.getElementById('apiKeyResult').scrollIntoView({ behavior: 'smooth' });
                 } else {
                     showStatus('Error: ' + result.error, 'error');
@@ -244,7 +330,6 @@ Headers: X-API-Key: your_api_key_here</code></pre>
             }
         });
 
-        // Check API usage
         async function checkUsage() {
             const apiKey = document.getElementById('usageApiKey').value;
             
@@ -255,45 +340,42 @@ Headers: X-API-Key: your_api_key_here</code></pre>
             
             try {
                 const response = await fetch('/api/v1/usage', {
-                    headers: {
-                        'X-API-Key': apiKey
-                    }
+                    headers: { 'X-API-Key': apiKey }
                 });
                 
                 const result = await response.json();
+                const usageResult = document.getElementById('usageResult');
                 
                 if (response.ok) {
                     const usage = result.usage;
                     const percentage = (usage.requests_used / usage.requests_limit) * 100;
                     
-                    document.getElementById('usageResult').innerHTML = `
-                        <h4 class="font-semibold mb-2">Usage Statistics:</h4>
-                        <div class="space-y-2">
-                            <div class="flex justify-between">
-                                <span>Requests Used:</span>
-                                <span>${usage.requests_used} / ${usage.requests_limit}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Remaining:</span>
-                                <span class="text-green-400">${usage.remaining}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Tier:</span>
-                                <span class="text-blue-400">${usage.tier}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Expires:</span>
-                                <span>${new Date(usage.expires_at).toLocaleDateString()}</span>
-                            </div>
-                            <div class="mt-3">
-                                <div class="bg-gray-600 rounded-full h-4">
-                                    <div class="bg-blue-500 h-4 rounded-full" style="width: ${Math.min(percentage, 100)}%"></div>
+                    usageResult.innerHTML = `
+                        <div style="background: var(--apple-bg); padding: 1rem; border-radius: 12px;">
+                            <h4 style="font-weight: 600; margin-bottom: 1rem;">Usage Statistics:</h4>
+                            <div style="display: grid; gap: 0.75rem;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--apple-text-secondary);">Requests Used:</span>
+                                    <span>${usage.requests_used} / ${usage.requests_limit}</span>
                                 </div>
-                                <p class="text-xs text-gray-400 mt-1">${percentage.toFixed(1)}% used</p>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--apple-text-secondary);">Remaining:</span>
+                                    <span style="color: var(--apple-success);">${usage.remaining}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--apple-text-secondary);">Tier:</span>
+                                    <span style="color: var(--apple-accent);">${usage.tier}</span>
+                                </div>
+                                <div style="margin-top: 0.5rem;">
+                                    <div style="background: var(--apple-border); border-radius: 4px; height: 8px;">
+                                        <div style="background: var(--apple-accent); height: 8px; border-radius: 4px; width: ${Math.min(percentage, 100)}%"></div>
+                                    </div>
+                                    <p style="font-size: 0.75rem; color: var(--apple-text-secondary); margin-top: 0.25rem;">${percentage.toFixed(1)}% used</p>
+                                </div>
                             </div>
                         </div>
                     `;
-                    document.getElementById('usageResult').classList.remove('hidden');
+                    usageResult.classList.remove('hidden');
                 } else {
                     showStatus('Error: ' + result.error, 'error');
                 }
@@ -302,34 +384,13 @@ Headers: X-API-Key: your_api_key_here</code></pre>
             }
         }
 
-        // Show status message
         function showStatus(message, type) {
-            // Create status element if it doesn't exist
-            let statusDiv = document.getElementById('statusMessage');
-            if (!statusDiv) {
-                statusDiv = document.createElement('div');
-                statusDiv.id = 'statusMessage';
-                statusDiv.className = 'rounded-lg p-4 mb-6';
-                document.querySelector('main').insertBefore(statusDiv, document.querySelector('main').firstChild);
-            }
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.className = `status-message ${type}`;
+            statusDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
             
-            let bgColor = 'bg-gray-700';
-            let icon = 'fa-info-circle';
-            
-            if (type === 'success') {
-                bgColor = 'bg-green-700';
-                icon = 'fa-check-circle';
-            } else if (type === 'error') {
-                bgColor = 'bg-red-700';
-                icon = 'fa-exclamation-circle';
-            }
-            
-            statusDiv.className = `${bgColor} rounded-lg p-4 mb-6`;
-            statusDiv.innerHTML = `<i class="fas ${icon} mr-2"></i>${message}`;
-            
-            // Auto-hide after 5 seconds
             setTimeout(() => {
-                statusDiv.classList.add('hidden');
+                statusDiv.style.display = 'none';
             }, 5000);
         }
     </script>

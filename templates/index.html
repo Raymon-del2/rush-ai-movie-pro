@@ -3,225 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rush - AI Movie Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Rush AI - Movie Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Momo+Signature&display=swap" rel="stylesheet">
-    <style>
-        .momo-signature-regular {
-            font-family: "Momo Signature", cursive;
-            font-weight: 400;
-            font-style: normal;
-        }
-        .movie-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .movie-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-        .chat-bubble {
-            animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .person-card .profile-image {
-            width: 96px;
-            height: 96px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #3B82F6;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-    </style>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
-<body class="bg-gray-900 text-white">
+<body>
     <!-- Header -->
-    <header class="bg-white p-4 shadow-lg">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <h1 class="momo-signature-regular text-4xl text-purple-600">Rush AI</h1>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-film"></i>
+                </div>
+                <span class="logo-text">Rush <span class="logo-accent">AI</span></span>
             </div>
             
-            <!-- Desktop Navigation -->
-            <nav class="hidden md:flex space-x-4">
-                <a href="#home" class="text-gray-800 hover:text-purple-600 transition">Home</a>
-                <a href="#chat" class="text-gray-800 hover:text-purple-600 transition">AI Chat</a>
-                <a href="#movies" class="text-gray-800 hover:text-purple-600 transition">Movies</a>
-                <a href="#people" class="text-gray-800 hover:text-purple-600 transition">People</a>
-                <a href="/api-keys" class="text-purple-600 hover:text-purple-700 transition font-semibold">
-                    <i class="fas fa-key mr-1"></i>Get API Key
+            <nav class="nav">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#chat" class="nav-link">AI Chat</a>
+                <a href="#movies" class="nav-link">Movies</a>
+                <a href="#people" class="nav-link">People</a>
+                <a href="/api-keys" class="nav-btn">
+                    <i class="fas fa-key"></i>API Key
                 </a>
-                <a href="/knowledge-keys" class="text-purple-600 hover:text-purple-700 transition font-semibold">
-                    <i class="fas fa-brain mr-1"></i>Knowledge Keys
+                <a href="/knowledge-keys" class="nav-btn">
+                    <i class="fas fa-brain"></i>Knowledge
                 </a>
             </nav>
             
-            <!-- Mobile Menu Button -->
-            <button id="mobileMenuBtn" class="md:hidden text-gray-800 hover:text-purple-600 focus:outline-none">
-                <i class="fas fa-bars text-2xl"></i>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
             </button>
         </div>
         
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-200">
-            <nav class="container mx-auto py-4 space-y-2">
-                <a href="#home" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
-                    <i class="fas fa-home mr-2"></i>Home
-                </a>
-                <a href="#chat" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
-                    <i class="fas fa-comments mr-2"></i>AI Chat
-                </a>
-                <a href="#movies" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
-                    <i class="fas fa-film mr-2"></i>Movies
-                </a>
-                <a href="#people" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
-                    <i class="fas fa-users mr-2"></i>People
-                </a>
-                <a href="/api-keys" class="block px-4 py-2 text-purple-600 hover:bg-purple-50 hover:text-purple-700 transition rounded font-semibold">
-                    <i class="fas fa-key mr-2"></i>Get API Key
-                </a>
-                <a href="/knowledge-keys" class="block px-4 py-2 text-purple-600 hover:bg-purple-50 hover:text-purple-700 transition rounded font-semibold">
-                    <i class="fas fa-brain mr-2"></i>Knowledge Keys
-                </a>
-            </nav>
-        </div>
+        <nav class="mobile-nav" id="mobileNav">
+            <a href="#home" class="mobile-nav-link" onclick="closeMobileMenu()">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="#chat" class="mobile-nav-link" onclick="closeMobileMenu()">
+                <i class="fas fa-robot"></i> AI Chat
+            </a>
+            <a href="#movies" class="mobile-nav-link" onclick="closeMobileMenu()">
+                <i class="fas fa-film"></i> Movies
+            </a>
+            <a href="#people" class="mobile-nav-link" onclick="closeMobileMenu()">
+                <i class="fas fa-users"></i> People
+            </a>
+            <a href="/api-keys" class="mobile-nav-link">
+                <i class="fas fa-key"></i> Get API Key
+            </a>
+            <a href="/knowledge-keys" class="mobile-nav-link">
+                <i class="fas fa-brain"></i> Knowledge Keys
+            </a>
+        </nav>
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto p-4">
-        <!-- Search Section -->
-        <section id="home" class="mb-8">
-            <div class="text-center mb-6">
-                <h2 class="text-3xl font-bold mb-2">Discover Movies & Celebrities</h2>
-                <p class="text-gray-400">Powered by AI and TMDB Database</p>
-            </div>
-            
-            <div class="max-w-2xl mx-auto">
-                <div class="flex space-x-2">
-                    <input 
-                        type="text" 
-                        id="searchInput" 
-                        placeholder="Search for movies, actors, directors..."
-                        class="flex-1 px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none"
-                    >
-                    <select id="searchType" class="px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none">
-                        <option value="movie">Movies</option>
-                        <option value="person">People</option>
-                    </select>
-                    <button 
-                        onclick="performSearch()"
-                        class="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 transition font-semibold"
-                    >
-                        <i class="fas fa-search mr-2"></i>Search
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Quick Stats -->
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div class="bg-gray-800 p-6 rounded-lg text-center">
-                <i class="fas fa-fire text-3xl text-orange-500 mb-2"></i>
-                <h3 class="text-xl font-semibold mb-1">Trending Now</h3>
-                <p class="text-gray-400">Discover what's hot</p>
-                <button onclick="loadTrending()" class="mt-3 text-purple-400 hover:text-purple-300">
-                    View Trending <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
-            <div class="bg-gray-800 p-6 rounded-lg text-center">
-                <i class="fas fa-star text-3xl text-yellow-500 mb-2"></i>
-                <h3 class="text-xl font-semibold mb-1">Popular Movies</h3>
-                <p class="text-gray-400">Top-rated films</p>
-                <button onclick="loadPopular()" class="mt-3 text-purple-400 hover:text-purple-300">
-                    Browse Popular <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
-            <div class="bg-gray-800 p-6 rounded-lg text-center">
-                <i class="fas fa-robot text-3xl text-blue-500 mb-2"></i>
-                <h3 class="text-xl font-semibold mb-1">AI Assistant</h3>
-                <p class="text-gray-400">Get movie recommendations</p>
-                <button onclick="scrollToChat()" class="mt-3 text-purple-400 hover:text-purple-300">
-                    Start Chat <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
-        </section>
-
-        <!-- Results Section -->
-        <section id="results" class="mb-8 hidden">
-            <h3 class="text-2xl font-bold mb-4">Search Results</h3>
-            <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Results will be loaded here -->
-            </div>
-        </section>
-
-        <!-- AI Chat Section -->
-        <section id="chat" class="mb-8">
-            <div class="bg-gray-800 rounded-lg p-6">
-                <h3 class="text-2xl font-bold mb-4">
-                    <i class="fas fa-robot mr-2 text-blue-500"></i>Chat with Rush AI
-                </h3>
+    <main class="main">
+        <div class="container">
+            <!-- Hero Section -->
+            <section id="home" class="hero">
+                <h1 class="hero-title">Discover Movies & Celebrities</h1>
+                <p class="hero-subtitle">Powered by AI and TMDB Database</p>
                 
-                <div id="chatMessages" class="h-96 overflow-y-auto mb-4 p-4 bg-gray-900 rounded-lg">
-                    <div class="chat-bubble bg-blue-600 p-3 rounded-lg mb-2 max-w-md">
-                        <p>Hello! I'm Rush, your AI movie expert. Ask me about movies, actors, directors, or get recommendations!</p>
+                <!-- Search Box -->
+                <div class="search-container">
+                    <div class="search-box">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            class="search-input"
+                            placeholder="Search for movies, actors, directors..."
+                            onkeypress="if(event.key === 'Enter') performSearch()"
+                        >
+                        <select id="searchType" class="search-select">
+                            <option value="movie">Movies</option>
+                            <option value="person">People</option>
+                        </select>
+                        <button class="search-btn" onclick="performSearch()">
+                            <i class="fas fa-search"></i>
+                            <span>Search</span>
+                        </button>
                     </div>
                 </div>
-                
-                <div class="flex space-x-2 mb-2">
-                    <input 
-                        type="text" 
-                        id="chatInput" 
-                        placeholder="Ask me anything about movies..."
-                        class="flex-1 px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none"
-                        onkeypress="if(event.key === 'Enter') sendMessage()"
-                    >
-                    <button 
-                        onclick="sendMessage()"
-                        class="px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700 transition font-semibold"
-                    >
-                        <i class="fas fa-paper-plane mr-2"></i>Send
-                    </button>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="quick-actions">
+                <div class="action-card" onclick="loadTrending()">
+                    <div class="action-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <h3 class="action-title">Trending Now</h3>
+                    <p class="action-desc">Discover what's hot</p>
                 </div>
-                
-                <div class="bg-gray-700 p-3 rounded-lg text-center">
-                    <p class="text-sm text-gray-400">
-                        <i class="fas fa-info-circle mr-2 text-blue-400"></i>
-                        AI responses may take a few seconds - good things take time! 
-                    </p>
+                <div class="action-card" onclick="loadPopular()">
+                    <div class="action-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="action-title">Popular Movies</h3>
+                    <p class="action-desc">Top-rated films</p>
                 </div>
-            </div>
-        </section>
+                <div class="action-card" onclick="scrollToChat()">
+                    <div class="action-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="action-title">AI Assistant</h3>
+                    <p class="action-desc">Get recommendations</p>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="section hidden">
+                <h2 class="section-title">
+                    <i class="fas fa-layer-group"></i>
+                    <span id="resultsTitle">Search Results</span>
+                </h2>
+                <div id="resultsGrid" class="results-grid">
+                    <!-- Results loaded here -->
+                </div>
+            </section>
+
+            <!-- Movies Section anchor -->
+            <div id="movies"></div>
+
+            <!-- Chat Section -->
+            <section id="chat" class="section">
+                <div class="chat-section">
+                    <div class="chat-header">
+                        <div class="chat-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div>
+                            <h3 class="chat-title">Chat with Rush AI</h3>
+                            <p class="chat-status"><i class="fas fa-circle"></i> Online</p>
+                        </div>
+                    </div>
+                    
+                    <div id="chatMessages" class="chat-messages">
+                        <div class="chat-message ai">
+                            Hello! I'm Rush, your AI movie expert. Ask me about movies, actors, directors, or get recommendations!
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <input 
+                            type="text" 
+                            id="chatInput" 
+                            class="chat-input"
+                            placeholder="Ask me anything about movies..."
+                            onkeypress="if(event.key === 'Enter') sendMessage()"
+                        >
+                        <button class="chat-send-btn" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>Send
+                        </button>
+                    </div>
+                    
+                    <div class="chat-hint">
+                        <i class="fas fa-info-circle"></i>
+                        AI responses may take a few seconds
+                    </div>
+                </div>
+            </section>
+        </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 p-4 text-center text-gray-400">
-        <p>&copy; 2025 Rush - AI Movie Pro</p>
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-content">&copy; 2025 Rush AI - Movie Pro</p>
+        </div>
     </footer>
 
-    <!-- Movie Detail Modal -->
-    <div id="movieModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6">
-                <div class="flex justify-between items-start mb-4">
-                    <h2 id="modalTitle" class="text-2xl font-bold"></h2>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-white">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
-                <div id="modalContent">
-                    <!-- Movie details will be loaded here -->
-                </div>
+    <!-- Modal -->
+    <div class="modal-overlay" id="movieModal" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalContent">
+                <!-- Movie details loaded here -->
             </div>
         </div>
     </div>
 
     <script>
         const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
+        
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mobileNav');
+            nav.classList.toggle('active');
+            const btn = document.querySelector('.mobile-menu-btn i');
+            btn.classList.toggle('fa-bars');
+            btn.classList.toggle('fa-times');
+        }
+        
+        function closeMobileMenu() {
+            document.getElementById('mobileNav').classList.remove('active');
+            const btn = document.querySelector('.mobile-menu-btn i');
+            btn.classList.remove('fa-times');
+            btn.classList.add('fa-bars');
+        }
         
         function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
@@ -235,7 +220,9 @@
                 .then(response => response.json())
                 .then(data => {
                     displayResults(data, type);
-                    document.getElementById('results').classList.remove('hidden');
+                    document.getElementById('resultsSection').classList.remove('hidden');
+                    document.getElementById('resultsTitle').textContent = type === 'movie' ? 'Movie Results' : 'People Results';
+                    document.getElementById('movies').scrollIntoView({ behavior: 'smooth' });
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -247,10 +234,15 @@
             const grid = document.getElementById('resultsGrid');
             grid.innerHTML = '';
             
-            const items = type === 'movie' ? data.results : data.results;
+            const items = data.results;
             
             if (!items || items.length === 0) {
-                grid.innerHTML = '<p class="col-span-full text-center text-gray-400">No results found</p>';
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <div class="empty-state-icon"><i class="fas fa-search"></i></div>
+                        <p class="empty-state-text">No results found</p>
+                    </div>
+                `;
                 return;
             }
             
@@ -262,31 +254,34 @@
         
         function createCard(item, type) {
             const div = document.createElement('div');
-            div.className = 'movie-card bg-gray-800 rounded-lg overflow-hidden cursor-pointer';
+            div.className = 'movie-card';
             
             const posterPath = item.poster_path || item.profile_path;
             const imageUrl = posterPath ? TMDB_IMAGE_BASE + posterPath : 'https://via.placeholder.com/300x450?text=No+Image';
             
             const title = type === 'movie' ? item.title : item.name;
-            const info = type === 'movie' ? 
-                `<p class="text-sm text-gray-400">${item.release_date || 'N/A'} • ${item.vote_average?.toFixed(1) || 'N/A'} ⭐</p>` :
-                `<p class="text-sm text-gray-400">${item.known_for_department || 'N/A'}</p>`;
+            const year = type === 'movie' ? (item.release_date ? item.release_date.split('-')[0] : '') : '';
+            const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+            const department = item.known_for_department || '';
             
             if (type === 'person') {
-                div.className = 'movie-card person-card bg-gray-800 rounded-lg overflow-hidden cursor-pointer';
+                div.className = 'movie-card person-card';
                 div.innerHTML = `
-                    <div class="p-6 text-center">
-                        <img src="${imageUrl}" alt="${title}" class="profile-image mx-auto mb-3">
-                        <h3 class="font-semibold text-lg mb-2 truncate">${title}</h3>
-                        ${info}
+                    <img src="${imageUrl}" alt="${title}" class="person-image" onerror="this.src='https://via.placeholder.com/200x200?text=No+Image'">
+                    <div class="person-info">
+                        <h3 class="person-name">${title}</h3>
+                        <p class="person-role">${department}</p>
                     </div>
                 `;
             } else {
                 div.innerHTML = `
-                    <img src="${imageUrl}" alt="${title}" class="w-full h-64 object-cover">
-                    <div class="p-4">
-                        <h3 class="font-semibold text-lg mb-2 truncate">${title}</h3>
-                        ${info}
+                    <img src="${imageUrl}" alt="${title}" class="movie-poster" onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
+                    <div class="movie-info">
+                        <h3 class="movie-title">${title}</h3>
+                        <p class="movie-meta">
+                            ${year ? `<span>${year}</span>` : ''}
+                            <span class="rating"><i class="fas fa-star"></i> ${rating}</span>
+                        </p>
                     </div>
                 `;
             }
@@ -319,46 +314,55 @@
                 const posterUrl = data.poster_path ? TMDB_IMAGE_BASE + data.poster_path : 'https://via.placeholder.com/300x450?text=No+Image';
                 
                 content.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="modal-grid">
                         <div>
-                            <img src="${posterUrl}" alt="${data.title}" class="w-full rounded-lg mb-4">
-                            <button onclick="generatePoster('${data.title}')" class="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition font-semibold">
-                                <i class="fas fa-magic mr-2"></i>Generate AI Poster
-                            </button>
+                            <img src="${posterUrl}" alt="${data.title}" class="modal-poster" onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
+                            <div class="modal-actions">
+                                <button class="modal-btn primary" onclick="generatePoster('${data.title.replace(/'/g, "\\'")}')">
+                                    <i class="fas fa-magic"></i>AI Poster
+                                </button>
+                            </div>
                         </div>
-                        <div class="md:col-span-2">
-                            <h3 class="text-xl font-semibold mb-2">Overview</h3>
-                            <p class="text-gray-300 mb-4">${data.overview || 'No overview available'}</p>
+                        <div>
+                            <div class="modal-section">
+                                <h4 class="modal-section-title">Overview</h4>
+                                <p class="modal-overview">${data.overview || 'No overview available'}</p>
+                            </div>
                             
-                            <div class="grid grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <span class="text-gray-400">Rating:</span> ${data.vote_average?.toFixed(1) || 'N/A'} ⭐
-                                </div>
-                                <div>
-                                    <span class="text-gray-400">Release:</span> ${data.release_date || 'N/A'}
-                                </div>
-                                <div>
-                                    <span class="text-gray-400">Runtime:</span> ${data.runtime ? data.runtime + ' min' : 'N/A'}
-                                </div>
-                                <div>
-                                    <span class="text-gray-400">Genres:</span> ${data.genres?.map(g => g.name).join(', ') || 'N/A'}
+                            <div class="modal-section">
+                                <h4 class="modal-section-title">Details</h4>
+                                <div class="modal-meta">
+                                    <div class="meta-item">
+                                        <div class="meta-label">Rating</div>
+                                        <div class="meta-value"><i class="fas fa-star" style="color: var(--apple-warning);"></i> ${data.vote_average?.toFixed(1) || 'N/A'}</div>
+                                    </div>
+                                    <div class="meta-item">
+                                        <div class="meta-label">Release</div>
+                                        <div class="meta-value">${data.release_date || 'N/A'}</div>
+                                    </div>
+                                    <div class="meta-item">
+                                        <div class="meta-label">Runtime</div>
+                                        <div class="meta-value">${data.runtime ? data.runtime + ' min' : 'N/A'}</div>
+                                    </div>
+                                    <div class="meta-item">
+                                        <div class="meta-label">Genres</div>
+                                        <div class="meta-value">${data.genres?.map(g => g.name).join(', ') || 'N/A'}</div>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div id="posterSection" class="mb-4 hidden">
-                                <h4 class="text-lg font-semibold mb-2">AI-Generated Poster Description</h4>
-                                <div class="bg-gray-700 p-3 rounded-lg">
-                                    <p id="posterContent" class="text-sm text-gray-300"></p>
-                                </div>
+                            <div id="posterSection" class="modal-section hidden">
+                                <h4 class="modal-section-title">AI-Generated Poster</h4>
+                                <div class="modal-overview" id="posterContent" style="background: var(--apple-bg); padding: 1rem; border-radius: 12px;"></div>
                             </div>
                             
-                            <h4 class="text-lg font-semibold mb-2">Cast</h4>
-                            <div class="flex flex-wrap gap-2">
-                                ${data.credits?.cast?.slice(0, 5).map(actor => `
-                                    <span class="bg-gray-700 px-3 py-1 rounded-full text-sm">
-                                        ${actor.name} (${actor.character})
-                                    </span>
-                                `).join('') || 'No cast information'}
+                            <div class="modal-section">
+                                <h4 class="modal-section-title">Cast</h4>
+                                <div class="cast-list">
+                                    ${data.credits?.cast?.slice(0, 5).map(actor => `
+                                        <span class="cast-tag">${actor.name} (${actor.character})</span>
+                                    `).join('') || 'No cast information'}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -368,66 +372,73 @@
                 const imageUrl = data.profile_path ? TMDB_IMAGE_BASE + data.profile_path : 'https://via.placeholder.com/300x450?text=No+Image';
                 
                 content.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="modal-grid">
                         <div class="text-center">
-                            <div class="w-48 h-48 mx-auto mb-4 rounded-full overflow-hidden border-4 border-blue-500">
-                                <img src="${imageUrl}" alt="${data.name}" class="w-full h-full object-cover">
-                            </div>
-                            <h4 class="text-xl font-semibold mb-2">${data.name}</h4>
-                            <div class="flex justify-center space-x-3 mb-4">
-                                <button onclick="generateSocialMedia('${data.name}')" class="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded-full text-sm transition">
-                                    <i class="fas fa-share-alt mr-1"></i>Social Media
+                            <img src="${imageUrl}" alt="${data.name}" class="person-avatar-large" onerror="this.src='https://via.placeholder.com/200x200?text=No+Image'">
+                            <div class="modal-actions">
+                                <button class="modal-btn primary" onclick="generateSocialMedia('${data.name.replace(/'/g, "\\'")}')">
+                                    <i class="fas fa-share-alt"></i>Social Media
                                 </button>
-                                <button onclick="generatePoster('movie starring ${data.name}')" class="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded-full text-sm transition">
-                                    <i class="fas fa-image mr-1"></i>Generate Poster
+                                <button class="modal-btn secondary" onclick="generatePoster('movie starring ${data.name.replace(/'/g, "\\'")}')">
+                                    <i class="fas fa-image"></i>Generate Poster
                                 </button>
                             </div>
                         </div>
-                        <div class="md:col-span-2">
-                            <h3 class="text-xl font-semibold mb-2">Biography</h3>
-                            <p class="text-gray-300 mb-4">${data.biography || 'No biography available'}</p>
-                            
-                            <div class="grid grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <span class="text-gray-400">Known for:</span> ${data.known_for_department || 'N/A'}
-                                </div>
-                                <div>
-                                    <span class="text-gray-400">Birthday:</span> ${data.birthday || 'N/A'}
-                                </div>
-                                <div>
-                                    <span class="text-gray-400">Place of birth:</span> ${data.place_of_birth || 'N/A'}
-                                </div>
-                                <div>
-                                    <span class="text-gray-400">Popularity:</span> ${data.popularity?.toFixed(1) || 'N/A'}
-                                </div>
+                        <div>
+                            <div class="modal-section">
+                                <h4 class="modal-section-title">Biography</h4>
+                                <p class="modal-overview">${data.biography || 'No biography available'}</p>
                             </div>
                             
-                            <div id="socialMediaSection" class="mb-4 hidden">
-                                <h4 class="text-lg font-semibold mb-2">Social Media & Web</h4>
-                                <div class="bg-gray-700 p-3 rounded-lg">
-                                    <p id="socialMediaContent" class="text-sm text-gray-300"></p>
-                                </div>
-                            </div>
-                            
-                            <h4 class="text-lg font-semibold mb-2">Known For</h4>
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
-                                ${data.movie_credits?.cast?.slice(0, 6).map(movie => `
-                                    <div class="bg-gray-700 p-2 rounded text-center">
-                                        <div class="text-sm font-semibold">${movie.title}</div>
-                                        <div class="text-xs text-gray-400">${movie.character || 'N/A'}</div>
+                            <div class="modal-section">
+                                <h4 class="modal-section-title">Details</h4>
+                                <div class="modal-meta">
+                                    <div class="meta-item">
+                                        <div class="meta-label">Known for</div>
+                                        <div class="meta-value">${data.known_for_department || 'N/A'}</div>
                                     </div>
-                                `).join('') || 'No movie credits'}
+                                    <div class="meta-item">
+                                        <div class="meta-label">Birthday</div>
+                                        <div class="meta-value">${data.birthday || 'N/A'}</div>
+                                    </div>
+                                    <div class="meta-item">
+                                        <div class="meta-label">Place of birth</div>
+                                        <div class="meta-value">${data.place_of_birth || 'N/A'}</div>
+                                    </div>
+                                    <div class="meta-item">
+                                        <div class="meta-label">Popularity</div>
+                                        <div class="meta-value">${data.popularity?.toFixed(1) || 'N/A'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="socialMediaSection" class="modal-section hidden">
+                                <h4 class="modal-section-title">Social Media & Web</h4>
+                                <div class="modal-overview" id="socialMediaContent" style="background: var(--apple-bg); padding: 1rem; border-radius: 12px;"></div>
+                            </div>
+                            
+                            <div class="modal-section">
+                                <h4 class="modal-section-title">Known For</h4>
+                                <div class="known-for-grid">
+                                    ${data.movie_credits?.cast?.slice(0, 6).map(movie => `
+                                        <div class="known-for-item">
+                                            <div class="known-for-title">${movie.title}</div>
+                                            <div class="known-for-character">${movie.character || 'N/A'}</div>
+                                        </div>
+                                    `).join('') || 'No movie credits'}
+                                </div>
                             </div>
                         </div>
                     </div>
                 `;
             }
             
-            modal.classList.remove('hidden');
+            modal.classList.add('active');
         }
         
-        function closeModal() {
-            document.getElementById('movieModal').classList.add('hidden');
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('movieModal').classList.remove('active');
         }
         
         function loadTrending() {
@@ -435,8 +446,9 @@
                 .then(response => response.json())
                 .then(data => {
                     displayResults(data, 'movie');
-                    document.getElementById('results').classList.remove('hidden');
-                    document.getElementById('home').scrollIntoView({ behavior: 'smooth' });
+                    document.getElementById('resultsSection').classList.remove('hidden');
+                    document.getElementById('resultsTitle').textContent = 'Trending Movies';
+                    document.getElementById('movies').scrollIntoView({ behavior: 'smooth' });
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -449,8 +461,9 @@
                 .then(response => response.json())
                 .then(data => {
                     displayResults(data, 'movie');
-                    document.getElementById('results').classList.remove('hidden');
-                    document.getElementById('home').scrollIntoView({ behavior: 'smooth' });
+                    document.getElementById('resultsSection').classList.remove('hidden');
+                    document.getElementById('resultsTitle').textContent = 'Popular Movies';
+                    document.getElementById('movies').scrollIntoView({ behavior: 'smooth' });
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -470,38 +483,31 @@
             
             const messagesDiv = document.getElementById('chatMessages');
             
-            // Add user message
             const userBubble = document.createElement('div');
-            userBubble.className = 'chat-bubble bg-gray-700 p-3 rounded-lg mb-2 max-w-md ml-auto';
+            userBubble.className = 'chat-message user';
             userBubble.innerHTML = `<p>${message}</p>`;
             messagesDiv.appendChild(userBubble);
             
             input.value = '';
             
-            // Add loading indicator
             const loadingBubble = document.createElement('div');
-            loadingBubble.className = 'chat-bubble bg-blue-600 p-3 rounded-lg mb-2 max-w-md';
-            loadingBubble.innerHTML = '<p><i class="fas fa-spinner fa-spin mr-2"></i>Thinking...</p>';
+            loadingBubble.className = 'chat-message ai';
+            loadingBubble.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Thinking...</p>';
             messagesDiv.appendChild(loadingBubble);
             
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
             
-            // Send to AI
             fetch('/api/chat', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: message })
             })
             .then(response => response.json())
             .then(data => {
-                // Remove loading indicator
                 loadingBubble.remove();
                 
-                // Add AI response
                 const aiBubble = document.createElement('div');
-                aiBubble.className = 'chat-bubble bg-blue-600 p-3 rounded-lg mb-2 max-w-md';
+                aiBubble.className = 'chat-message ai';
                 aiBubble.innerHTML = `<p>${data.response}</p>`;
                 messagesDiv.appendChild(aiBubble);
                 
@@ -512,7 +518,7 @@
                 console.error('Error:', error);
                 
                 const errorBubble = document.createElement('div');
-                errorBubble.className = 'chat-bubble bg-red-600 p-3 rounded-lg mb-2 max-w-md';
+                errorBubble.className = 'chat-message ai';
                 errorBubble.innerHTML = '<p>Sorry, I encountered an error. Please try again.</p>';
                 messagesDiv.appendChild(errorBubble);
                 
@@ -522,8 +528,13 @@
         
         function showError(message) {
             const grid = document.getElementById('resultsGrid');
-            grid.innerHTML = `<p class="col-span-full text-center text-red-400">${message}</p>`;
-            document.getElementById('results').classList.remove('hidden');
+            grid.innerHTML = `
+                <div class="empty-state" style="grid-column: 1 / -1;">
+                    <div class="empty-state-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <p class="empty-state-text">${message}</p>
+                </div>
+            `;
+            document.getElementById('resultsSection').classList.remove('hidden');
         }
         
         function generatePoster(query) {
@@ -532,7 +543,7 @@
             
             if (posterSection) {
                 posterSection.classList.remove('hidden');
-                posterContent.innerHTML = '<i class="fas fa-tools mr-2"></i>Feature Coming Soon! 🚧<br><span class="text-sm text-gray-400">We\'re working on bringing you amazing AI-generated poster descriptions. Stay tuned!</span>';
+                posterContent.innerHTML = '<i class="fas fa-tools"></i> Feature Coming Soon!';
             }
         }
         
@@ -540,105 +551,32 @@
             const socialMediaSection = document.getElementById('socialMediaSection');
             const socialMediaContent = document.getElementById('socialMediaContent');
             
-            // Show loading state
             if (socialMediaSection) {
                 socialMediaSection.classList.remove('hidden');
-                socialMediaContent.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Looking up social media information...';
+                socialMediaContent.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Looking up...';
             }
             
             fetch('/api/generate', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ type: 'social', query: query })
             })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => {
-                        throw new Error(err.error || 'Server error');
-                    });
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                if (socialMediaSection && socialMediaContent) {
+                if (socialMediaContent) {
                     socialMediaContent.innerHTML = data.response.replace(/\n/g, '<br>');
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                if (socialMediaSection && socialMediaContent) {
-                    socialMediaContent.innerHTML = `Failed to fetch social media information: ${error.message}. Please try again.`;
+                if (socialMediaContent) {
+                    socialMediaContent.innerHTML = 'Failed to fetch information. Please try again.';
                 }
             });
         }
         
-        // Smooth scroll for navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        });
-        
-        // Search on Enter key
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
-        });
-        
-        // Mobile menu toggle
-        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
-            
-            // Change icon based on menu state
-            const icon = this.querySelector('i');
-            if (menu.classList.contains('hidden')) {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            } else {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            }
-        });
-
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('#mobileMenu a').forEach(link => {
-            link.addEventListener('click', function() {
-                const menu = document.getElementById('mobileMenu');
-                const btn = document.getElementById('mobileMenuBtn');
-                const icon = btn.querySelector('i');
-                
-                menu.classList.add('hidden');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            });
-        });
-
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('mobileMenu');
-            const btn = document.getElementById('mobileMenuBtn');
-            
-            if (!menu.contains(event.target) && !btn.contains(event.target)) {
-                menu.classList.add('hidden');
-                const icon = btn.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        });
-
-        // Search functionality
-        document.getElementById('searchForm').addEventListener('submit', async function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
         });
     </script>
 </body>

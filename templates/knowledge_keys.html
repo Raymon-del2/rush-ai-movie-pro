@@ -4,383 +4,462 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Knowledge API Keys - Rush AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Momo+Signature&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
     <style>
-        .momo-signature-regular {
-            font-family: "Momo Signature", cursive;
-            font-weight: 400;
-            font-style: normal;
+        .page-content { padding-top: 100px; min-height: 100vh; }
+        .api-card {
+            background: var(--apple-surface);
+            border-radius: var(--apple-radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--apple-border);
+        }
+        .api-card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .info-box {
+            background: rgba(157, 80, 187, 0.1);
+            border: 1px solid rgba(157, 80, 187, 0.3);
+            border-radius: var(--apple-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        .stat-item {
+            background: var(--apple-bg);
+            padding: 1.25rem;
+            border-radius: var(--apple-radius);
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        .stat-label {
+            font-size: 0.8125rem;
+            color: var(--apple-text-secondary);
+            margin-top: 0.25rem;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--apple-text-secondary);
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--apple-bg);
+            border: 1px solid var(--apple-border);
+            border-radius: var(--apple-radius);
+            color: var(--apple-text);
+            font-size: 0.9375rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+        .form-input:focus { border-color: var(--apple-accent); }
+        .generate-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--apple-warning);
+            border: none;
+            border-radius: var(--apple-radius);
+            color: #000;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .generate-btn:hover { opacity: 0.9; }
+        .key-display {
+            background: var(--apple-bg);
+            padding: 1rem;
+            border-radius: var(--apple-radius);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .key-text {
+            font-family: monospace;
+            color: var(--apple-success);
+            word-break: break-all;
+        }
+        .copy-btn {
+            padding: 0.5rem 1rem;
+            background: var(--apple-success);
+            border: none;
+            border-radius: var(--apple-radius);
+            color: white;
+            font-size: 0.8125rem;
+            cursor: pointer;
+            margin-left: 1rem;
+        }
+        .warning-box {
+            background: rgba(255, 159, 10, 0.1);
+            border: 1px solid rgba(255, 159, 10, 0.3);
+            border-radius: var(--apple-radius);
+            padding: 0.75rem;
+            font-size: 0.8125rem;
+            color: var(--apple-warning);
+        }
+        .key-item {
+            background: var(--apple-bg);
+            padding: 1rem;
+            border-radius: var(--apple-radius);
+            margin-bottom: 0.75rem;
+        }
+        .key-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+        .key-name { font-weight: 600; }
+        .key-desc { font-size: 0.8125rem; color: var(--apple-text-secondary); }
+        .key-meta {
+            font-size: 0.75rem;
+            color: var(--apple-text-secondary);
+            margin-top: 0.5rem;
+        }
+        .key-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .action-btn {
+            padding: 0.375rem 0.75rem;
+            border-radius: var(--apple-radius);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s ease;
+        }
+        .action-btn:hover { opacity: 0.8; }
+        .action-btn.deactivate { background: var(--apple-warning); color: #000; }
+        .action-btn.reactivate { background: var(--apple-success); color: white; }
+        .action-btn.delete { background: var(--apple-danger); color: white; }
+        .code-block {
+            background: var(--apple-bg);
+            padding: 1rem;
+            border-radius: var(--apple-radius);
+            font-family: monospace;
+            font-size: 0.8125rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        .toast {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 1rem 1.5rem;
+            border-radius: var(--apple-radius);
+            z-index: 3000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        .toast.show { display: flex; align-items: center; gap: 0.75rem; }
+        .toast.success { background: var(--apple-success); color: white; }
+        .toast.error { background: var(--apple-danger); color: white; }
+        .toast.warning { background: var(--apple-warning); color: #000; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--apple-surface);
+            border-radius: var(--apple-radius-lg);
+            padding: 1.5rem;
+            max-width: 400px;
+            width: 90%;
+        }
+        .modal-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; }
+        .modal-msg { color: var(--apple-text-secondary); margin-bottom: 1.5rem; }
+        .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+        .modal-btn {
+            padding: 0.5rem 1rem;
+            border-radius: var(--apple-radius);
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        .modal-btn.confirm { background: var(--apple-danger); color: white; }
+        .modal-btn.cancel { background: var(--apple-surface-elevated); color: var(--apple-text); }
+        @media (max-width: 768px) {
+            .stat-grid { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .key-display { flex-direction: column; gap: 0.75rem; }
+            .copy-btn { margin-left: 0; width: 100%; }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white">
+<body>
     <!-- Header -->
-    <header class="bg-white p-4 shadow-lg">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <h1 class="momo-signature-regular text-4xl text-purple-600">Rush AI</h1>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-film"></i></div>
+                <span class="logo-text">Rush <span class="logo-accent">AI</span></span>
             </div>
-            
-            <!-- Desktop Navigation -->
-            <nav class="hidden md:flex space-x-4">
-                <a href="/" class="text-gray-800 hover:text-purple-600 transition">Home</a>
-                <a href="/api-keys" class="text-purple-600 hover:text-purple-700 transition font-semibold">
-                    <i class="fas fa-key mr-1"></i>Get API Key
-                </a>
-                <a href="/knowledge-keys" class="text-purple-600 hover:text-purple-700 transition font-semibold">
-                    <i class="fas fa-brain mr-1"></i>Knowledge Keys
-                </a>
-                <a href="/docs" class="text-gray-800 hover:text-purple-600 transition">API Docs</a>
+            <nav class="nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/api-keys" class="nav-link">API Key</a>
+                <a href="/knowledge-keys" class="nav-link active">Knowledge</a>
+                <a href="/docs" class="nav-link">Docs</a>
             </nav>
-            
-            <!-- Mobile Menu Button -->
-            <button id="mobileMenuBtn" class="md:hidden text-gray-800 hover:text-purple-600 focus:outline-none">
-                <i class="fas fa-bars text-2xl"></i>
-            </button>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
         </div>
-        
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-200">
-            <nav class="container mx-auto py-4 space-y-2">
-                <a href="/" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
-                    <i class="fas fa-home mr-2"></i>Home
-                </a>
-                <a href="/api-keys" class="block px-4 py-2 text-purple-600 hover:bg-purple-50 hover:text-purple-700 transition rounded font-semibold">
-                    <i class="fas fa-key mr-2"></i>Get API Key
-                </a>
-                <a href="/knowledge-keys" class="block px-4 py-2 text-purple-600 hover:bg-purple-50 hover:text-purple-700 transition rounded font-semibold">
-                    <i class="fas fa-brain mr-1"></i>Knowledge Keys
-                </a>
-                <a href="/docs" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 hover:text-purple-600 transition rounded">
-                    <i class="fas fa-book mr-2"></i>API Docs
-                </a>
-            </nav>
-        </div>
+        <nav class="mobile-nav" id="mobileNav">
+            <a href="/" class="mobile-nav-link">Home</a>
+            <a href="/api-keys" class="mobile-nav-link">Get API Key</a>
+            <a href="/knowledge-keys" class="mobile-nav-link">Knowledge Keys</a>
+            <a href="/docs" class="mobile-nav-link">API Docs</a>
+        </nav>
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto p-4 max-w-5xl">
-        <!-- Introduction -->
-        <div class="bg-gray-800 rounded-lg p-6 mb-6">
-            <h2 class="text-2xl font-bold mb-4">
-                <i class="fas fa-brain mr-2 text-purple-500"></i>Knowledge API Keys
-            </h2>
-            <p class="text-gray-300 mb-4">
-                Generate API keys specifically for accessing the knowledge that your Rush AI has learned from user interactions. 
-                These keys allow other AI systems to benefit from your AI's accumulated knowledge.
-            </p>
-            <div class="bg-purple-900 p-4 rounded-lg border border-purple-700">
-                <p class="text-purple-200">
-                    <i class="fas fa-lightbulb mr-2"></i>
-                    <strong>Smart Learning:</strong> Your AI automatically learns from good responses and stores them in the knowledge database.
-                </p>
-            </div>
-        </div>
-
-        <!-- Knowledge Statistics -->
-        <div class="bg-gray-800 rounded-lg p-6 mb-6">
-            <h3 class="text-xl font-bold mb-4">
-                <i class="fas fa-chart-line mr-2 text-green-500"></i>Knowledge Statistics
-            </h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-gray-700 p-4 rounded-lg text-center">
-                    <div class="text-3xl font-bold text-green-400" id="totalKnowledge">-</div>
-                    <div class="text-sm text-gray-300">Total Knowledge Items</div>
-                </div>
-                <div class="bg-gray-700 p-4 rounded-lg text-center">
-                    <div class="text-3xl font-bold text-blue-400" id="totalUses">-</div>
-                    <div class="text-sm text-gray-300">Total Uses</div>
-                </div>
-                <div class="bg-gray-700 p-4 rounded-lg text-center">
-                    <div class="text-3xl font-bold text-purple-400" id="contributors">-</div>
-                    <div class="text-sm text-gray-300">Contributors</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Generate Knowledge Key -->
-        <div class="bg-gray-800 rounded-lg p-6 mb-6">
-            <h3 class="text-xl font-bold mb-4">
-                <i class="fas fa-key mr-2 text-yellow-500"></i>Generate Knowledge API Key
-            </h3>
-            <p class="text-gray-300 mb-4">
-                Create a dedicated API key for accessing learned knowledge. Perfect for other AI systems to benefit from your Rush AI's knowledge.
-            </p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label class="block text-sm font-medium mb-2">Key Name</label>
-                    <input type="text" id="keyName" placeholder="My AI Knowledge Key" 
-                           class="w-full px-3 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Description</label>
-                    <input type="text" id="keyDescription" placeholder="For accessing learned movie knowledge" 
-                           class="w-full px-3 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                </div>
-            </div>
-            
-            <button onclick="generateKnowledgeKey()" 
-                    class="px-6 py-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg font-semibold transition">
-                <i class="fas fa-magic mr-2"></i>Generate Knowledge Key
-            </button>
-        </div>
-
-        <!-- Generated Key Display -->
-        <div id="keyDisplay" class="bg-gray-800 rounded-lg p-6 mb-6 hidden">
-            <h3 class="text-xl font-bold mb-4">
-                <i class="fas fa-check-circle mr-2 text-green-500"></i>Your Knowledge API Key
-            </h3>
-            <div class="bg-gray-900 p-4 rounded-lg mb-4">
-                <div class="flex items-center justify-between">
-                    <code id="generatedKey" class="text-green-400 font-mono text-sm"></code>
-                    <button onclick="copyKey()" class="px-3 py-1 bg-green-600 hover:bg-green-700 rounded text-sm transition">
-                        <i class="fas fa-copy mr-1"></i>Copy
-                    </button>
-                </div>
-            </div>
-            <div class="bg-yellow-900 p-3 rounded-lg border border-yellow-700">
-                <p class="text-yellow-200 text-sm">
-                    <i class="fas fa-exclamation-triangle mr-2"></i>
-                    <strong>Save this key securely!</strong> It won't be shown again. Use it to access your AI's learned knowledge.
-                </p>
-            </div>
-        </div>
-
-        <!-- Existing Knowledge Keys -->
-        <div class="bg-gray-800 rounded-lg p-6 mb-6">
-            <h3 class="text-xl font-bold mb-4">
-                <i class="fas fa-list mr-2 text-blue-500"></i>Existing Knowledge Keys
-            </h3>
-            <div id="keysList" class="space-y-3">
-                <!-- Keys will be loaded here -->
-            </div>
-        </div>
-
-        <!-- Usage Examples -->
-        <div class="bg-gray-800 rounded-lg p-6">
-            <h3 class="text-xl font-bold mb-4">
-                <i class="fas fa-code mr-2 text-purple-500"></i>Usage Examples
-            </h3>
-            
-            <div class="space-y-4">
-                <div>
-                    <h4 class="font-semibold text-green-400 mb-2">Access Learned Knowledge</h4>
-                    <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
-                        <pre><code>GET /api/knowledge/by-source?source=auto_learning
-Headers: X-Knowledge-Key: rk_your_key_here</code></pre>
+    <main class="main">
+        <div class="container">
+            <div class="page-content">
+                <!-- Introduction -->
+                <div class="api-card">
+                    <h2 class="api-card-title">
+                        <i class="fas fa-brain" style="color: #9d50bb;"></i>
+                        Knowledge API Keys
+                    </h2>
+                    <p style="color: var(--apple-text-secondary); margin-bottom: 1rem;">
+                        Generate API keys specifically for accessing the knowledge that your Rush AI has learned from user interactions.
+                    </p>
+                    <div class="info-box">
+                        <p><i class="fas fa-lightbulb"></i> <strong>Smart Learning:</strong> Your AI automatically learns from good responses and stores them in the knowledge database.</p>
                     </div>
                 </div>
-                
-                <div>
-                    <h4 class="font-semibold text-blue-400 mb-2">Teach Your AI</h4>
-                    <div class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto">
-                        <pre><code>POST /api/learn
-Body: {
-  "question": "What is the plot of Dune?",
-  "answer": "Dune follows Paul Atreides...",
-  "source": "external_ai"
-}</code></pre>
+
+                <!-- Knowledge Statistics -->
+                <div class="api-card">
+                    <h3 class="api-card-title">
+                        <i class="fas fa-chart-line" style="color: var(--apple-success);"></i>
+                        Knowledge Statistics
+                    </h3>
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalKnowledge" style="color: var(--apple-success);">-</div>
+                            <div class="stat-label">Total Knowledge Items</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalUses" style="color: var(--apple-accent);">-</div>
+                            <div class="stat-label">Total Uses</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="contributors" style="color: #9d50bb;">-</div>
+                            <div class="stat-label">Contributors</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    <!-- Custom Confirmation Modal -->
-        <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-            <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
-                <h3 id="modalTitle" class="text-xl font-bold mb-4">Confirm Action</h3>
-                <p id="modalMessage" class="text-gray-300 mb-6">Are you sure you want to proceed?</p>
-                <div class="flex space-x-3">
-                    <button id="confirmButton" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-semibold transition">
-                        Confirm
-                    </button>
-                    <button id="cancelButton" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg font-semibold transition">
-                        Cancel
+
+                <!-- Generate Knowledge Key -->
+                <div class="api-card">
+                    <h3 class="api-card-title">
+                        <i class="fas fa-key" style="color: var(--apple-warning);"></i>
+                        Generate Knowledge API Key
+                    </h3>
+                    <div class="form-row">
+                        <div>
+                            <label class="form-label">Key Name</label>
+                            <input type="text" id="keyName" class="form-input" placeholder="My AI Knowledge Key">
+                        </div>
+                        <div>
+                            <label class="form-label">Description</label>
+                            <input type="text" id="keyDescription" class="form-input" placeholder="For accessing learned movie knowledge">
+                        </div>
+                    </div>
+                    <button onclick="generateKnowledgeKey()" class="generate-btn">
+                        <i class="fas fa-magic"></i> Generate Knowledge Key
                     </button>
                 </div>
-            </div>
-        </div>
 
-        <!-- Success/Error Toast -->
-        <div id="toast" class="fixed top-4 right-4 hidden z-50">
-            <div id="toastContent" class="rounded-lg p-4 shadow-lg flex items-center space-x-3">
-                <i id="toastIcon" class="fas fa-check-circle"></i>
-                <span id="toastMessage"></span>
+                <!-- Generated Key Display -->
+                <div id="keyDisplay" class="api-card hidden">
+                    <h3 class="api-card-title">
+                        <i class="fas fa-check-circle" style="color: var(--apple-success);"></i>
+                        Your Knowledge API Key
+                    </h3>
+                    <div class="key-display">
+                        <code id="generatedKey" class="key-text"></code>
+                        <button onclick="copyKey()" class="copy-btn"><i class="fas fa-copy"></i> Copy</button>
+                    </div>
+                    <div class="warning-box">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Save this key securely!</strong> It won't be shown again.
+                    </div>
+                </div>
+
+                <!-- Existing Knowledge Keys -->
+                <div class="api-card">
+                    <h3 class="api-card-title">
+                        <i class="fas fa-list" style="color: var(--apple-accent);"></i>
+                        Existing Knowledge Keys
+                    </h3>
+                    <div id="keysList"></div>
+                </div>
+
+                <!-- Usage Examples -->
+                <div class="api-card">
+                    <h3 class="api-card-title">
+                        <i class="fas fa-code" style="color: #9d50bb;"></i>
+                        Usage Examples
+                    </h3>
+                    <div style="margin-bottom: 1rem;">
+                        <h4 style="color: var(--apple-success); font-weight: 600; margin-bottom: 0.5rem;">Access Learned Knowledge</h4>
+                        <div class="code-block">
+GET /api/knowledge/by-source?source=auto_learning<br>
+Headers: X-Knowledge-Key: rk_your_key_here
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--apple-accent); font-weight: 600; margin-bottom: 0.5rem;">Teach Your AI</h4>
+                        <div class="code-block">
+POST /api/learn<br>
+Body: {"question": "What is the plot of Dune?", "answer": "Dune follows Paul Atreides...", "source": "external_ai"}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
 
+    <!-- Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <h3 class="modal-title" id="modalTitle">Confirm Action</h3>
+            <p class="modal-msg" id="modalMessage">Are you sure you want to proceed?</p>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="hideModal()">Cancel</button>
+                <button class="modal-btn confirm" id="confirmButton">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <i class="fas"></i>
+        <span id="toastMessage"></span>
+    </div>
+
     <script>
-        // Mobile menu toggle
-        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
-            
-            // Change icon based on menu state
-            const icon = this.querySelector('i');
-            if (menu.classList.contains('hidden')) {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            } else {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            }
-        });
+        let currentAction = null;
+        let currentKey = null;
 
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('#mobileMenu a').forEach(link => {
-            link.addEventListener('click', function() {
-                const menu = document.getElementById('mobileMenu');
-                const btn = document.getElementById('mobileMenuBtn');
-                const icon = btn.querySelector('i');
-                
-                menu.classList.add('hidden');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            });
-        });
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mobileNav');
+            nav.classList.toggle('active');
+            const btn = document.querySelector('.mobile-menu-btn i');
+            btn.classList.toggle('fa-bars');
+            btn.classList.toggle('fa-times');
+        }
 
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('mobileMenu');
-            const btn = document.getElementById('mobileMenuBtn');
-            
-            if (!menu.contains(event.target) && !btn.contains(event.target)) {
-                menu.classList.add('hidden');
-                const icon = btn.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        });
-
-        // Load statistics and keys on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadStatistics();
             loadKnowledgeKeys();
-            
-            // Setup modal event listeners
-            document.getElementById('cancelButton').addEventListener('click', hideModal);
             document.getElementById('confirmModal').addEventListener('click', function(e) {
                 if (e.target === this) hideModal();
             });
         });
 
-        let currentAction = null;
-        let currentKey = null;
-
         function showModal(title, message, action, key) {
             document.getElementById('modalTitle').textContent = title;
             document.getElementById('modalMessage').textContent = message;
-            document.getElementById('confirmModal').classList.remove('hidden');
+            document.getElementById('confirmModal').classList.add('active');
             currentAction = action;
             currentKey = key;
         }
 
         function hideModal() {
-            document.getElementById('confirmModal').classList.add('hidden');
+            document.getElementById('confirmModal').classList.remove('active');
             currentAction = null;
             currentKey = null;
         }
 
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
-            const toastContent = document.getElementById('toastContent');
-            const toastIcon = document.getElementById('toastIcon');
-            const toastMessage = document.getElementById('toastMessage');
-            
-            // Set styles based on type
-            if (type === 'success') {
-                toastContent.className = 'bg-green-600 text-white rounded-lg p-4 shadow-lg flex items-center space-x-3';
-                toastIcon.className = 'fas fa-check-circle';
-            } else if (type === 'error') {
-                toastContent.className = 'bg-red-600 text-white rounded-lg p-4 shadow-lg flex items-center space-x-3';
-                toastIcon.className = 'fas fa-exclamation-circle';
-            } else if (type === 'warning') {
-                toastContent.className = 'bg-yellow-600 text-white rounded-lg p-4 shadow-lg flex items-center space-x-3';
-                toastIcon.className = 'fas fa-exclamation-triangle';
-            }
-            
-            toastMessage.textContent = message;
-            toast.classList.remove('hidden');
-            
-            // Auto-hide after 3 seconds
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 3000);
+            const icon = toast.querySelector('i');
+            toast.className = `toast ${type} show`;
+            icon.className = `fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'exclamation-triangle'}`;
+            document.getElementById('toastMessage').textContent = message;
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
         document.getElementById('confirmButton').addEventListener('click', function() {
-            if (currentAction === 'deactivate') {
-                deactivateKey(currentKey);
-            } else if (currentAction === 'delete') {
-                deleteKey(currentKey);
-            }
+            if (currentAction === 'deactivate') deactivateKey(currentKey);
+            else if (currentAction === 'delete') deleteKey(currentKey);
             hideModal();
         });
 
         function loadStatistics() {
             fetch('/api/knowledge/stats')
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
                     document.getElementById('totalKnowledge').textContent = data.total_knowledge_items || 0;
                     document.getElementById('totalUses').textContent = data.total_uses || 0;
                     document.getElementById('contributors').textContent = data.contributors || 0;
-                })
-                .catch(error => {
-                    console.error('Error loading statistics:', error);
                 });
         }
 
         function loadKnowledgeKeys() {
             fetch('/api/knowledge-keys')
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
-                    const keysList = document.getElementById('keysList');
-                    
+                    const list = document.getElementById('keysList');
                     if (data.keys && data.keys.length > 0) {
-                        keysList.innerHTML = data.keys.map(key => `
-                            <div class="bg-gray-700 p-4 rounded-lg">
-                                <div class="flex justify-between items-start">
-                                    <div class="flex-1">
-                                        <div class="font-semibold">${key.name}</div>
-                                        <div class="text-sm text-gray-400">${key.description}</div>
-                                        <div class="text-xs text-gray-500 mt-1">
-                                            Added: ${key.knowledge_added} knowledge items | 
-                                            Last used: ${key.last_used || 'Never'} | 
-                                            Status: ${key.is_active ? '🟢 Active' : '🔴 Inactive'}
+                        list.innerHTML = data.keys.map(key => `
+                            <div class="key-item">
+                                <div class="key-item-header">
+                                    <div>
+                                        <div class="key-name">${key.name}</div>
+                                        <div class="key-desc">${key.description}</div>
+                                        <div class="key-meta">
+                                            Added: ${key.knowledge_added} items | Last used: ${key.last_used || 'Never'} | Status: ${key.is_active ? '🟢 Active' : '🔴 Inactive'}
                                         </div>
                                     </div>
-                                    <div class="flex space-x-2 ml-4">
+                                    <div class="key-actions">
                                         ${key.is_active ? `
-                                            <button onclick="showModal('Deactivate Key', 'Are you sure you want to deactivate this key? It will stop working but can be reactivated later.', 'deactivate', '${key.key}')" 
-                                                    class="px-3 py-1 bg-yellow-600 hover:bg-yellow-700 rounded text-sm transition">
-                                                <i class="fas fa-pause mr-1"></i>Deactivate
-                                            </button>
+                                            <button onclick="showModal('Deactivate Key', 'Are you sure you want to deactivate this key?', 'deactivate', '${key.key}')" class="action-btn deactivate">Deactivate</button>
                                         ` : `
-                                            <button onclick="reactivateKey('${key.key}')" 
-                                                    class="px-3 py-1 bg-green-600 hover:bg-green-700 rounded text-sm transition">
-                                                <i class="fas fa-play mr-1"></i>Reactivate
-                                            </button>
+                                            <button onclick="reactivateKey('${key.key}')" class="action-btn reactivate">Reactivate</button>
                                         `}
-                                        <button onclick="showModal('Delete Key', 'Are you sure you want to permanently delete this key? This action cannot be undone!', 'delete', '${key.key}')" 
-                                                class="px-3 py-1 bg-red-600 hover:bg-red-700 rounded text-sm transition">
-                                            <i class="fas fa-trash mr-1"></i>Delete
-                                        </button>
+                                        <button onclick="showModal('Delete Key', 'Are you sure you want to permanently delete this key?', 'delete', '${key.key}')" class="action-btn delete">Delete</button>
                                     </div>
                                 </div>
                             </div>
                         `).join('');
                     } else {
-                        keysList.innerHTML = '<p class="text-gray-400">No knowledge keys generated yet.</p>';
+                        list.innerHTML = '<p style="color: var(--apple-text-secondary);">No knowledge keys generated yet.</p>';
                     }
-                })
-                .catch(error => {
-                    console.error('Error loading keys:', error);
-                    document.getElementById('keysList').innerHTML = '<p class="text-red-400">Error loading keys.</p>';
                 });
         }
 
@@ -388,99 +467,51 @@ Body: {
             const name = document.getElementById('keyName').value || 'Knowledge API Key';
             const description = document.getElementById('keyDescription').value || 'API key for accessing learned knowledge';
             
-            const button = event.target;
-            button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating...';
-            
             fetch('/api/knowledge-keys', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: name,
-                    description: description
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, description })
             })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
                 if (data.success) {
                     document.getElementById('generatedKey').textContent = data.knowledge_key;
                     document.getElementById('keyDisplay').classList.remove('hidden');
-                    
-                    // Clear form
                     document.getElementById('keyName').value = '';
                     document.getElementById('keyDescription').value = '';
-                    
-                    // Reload keys list
                     loadKnowledgeKeys();
                 } else {
-                    alert('Error generating key: ' + (data.error || 'Unknown error'));
+                    showToast('Error: ' + (data.error || 'Unknown error'), 'error');
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error generating key. Please try again.');
-            })
-            .finally(() => {
-                button.disabled = false;
-                button.innerHTML = '<i class="fas fa-magic mr-2"></i>Generate Knowledge Key';
             });
         }
 
         function copyKey() {
-            const keyText = document.getElementById('generatedKey').textContent;
-            navigator.clipboard.writeText(keyText).then(() => {
-                showToast('Key copied to clipboard!', 'success');
-            }).catch(() => {
-                showToast('Failed to copy key', 'error');
-            });
+            navigator.clipboard.writeText(document.getElementById('generatedKey').textContent)
+                .then(() => showToast('Key copied to clipboard!', 'success'))
+                .catch(() => showToast('Failed to copy key', 'error'));
         }
 
         function deactivateKey(key) {
-            fetch(`/api/knowledge-keys/${key}`, {
-                method: 'DELETE'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Key deactivated successfully!', 'success');
+            fetch(`/api/knowledge-keys/${key}`, { method: 'DELETE' })
+                .then(r => r.json())
+                .then(data => {
+                    showToast(data.success ? 'Key deactivated!' : 'Error', data.success ? 'success' : 'error');
                     loadKnowledgeKeys();
-                } else {
-                    showToast('Error deactivating key: ' + (data.error || 'Unknown error'), 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showToast('Error deactivating key. Please try again.', 'error');
-            });
+                });
         }
 
         function reactivateKey(key) {
-            // This would need a new endpoint to reactivate keys
             showToast('Reactivate feature coming soon!', 'warning');
         }
 
         function deleteKey(key) {
-            fetch(`/api/knowledge-keys/${key}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-Permanent-Delete': 'true'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Key deleted permanently!', 'success');
+            fetch(`/api/knowledge-keys/${key}`, { method: 'DELETE', headers: { 'X-Permanent-Delete': 'true' } })
+                .then(r => r.json())
+                .then(data => {
+                    showToast(data.success ? 'Key deleted!' : 'Error', data.success ? 'success' : 'error');
                     loadKnowledgeKeys();
-                } else {
-                    showToast('Error deleting key: ' + (data.error || 'Unknown error'), 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showToast('Error deleting key. Please try again.', 'error');
-            });
+                });
         }
     </script>
 </body>

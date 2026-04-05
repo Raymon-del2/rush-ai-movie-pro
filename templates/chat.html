@@ -4,148 +4,210 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rush AI Chat - Movie Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
     <style>
-        .chat-bubble {
-            animation: fadeIn 0.3s ease;
+        .chat-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .chat-page .main {
+            flex: 1;
+            padding-top: 100px;
+        }
+        .chat-container {
+            max-width: 900px;
+            margin: 0 auto;
+            height: calc(100vh - 180px);
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+            background: var(--apple-surface);
+            border-radius: var(--apple-radius-lg);
+            margin-bottom: 1rem;
+        }
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--apple-text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s ease;
+        }
+        .back-btn:hover {
+            color: var(--apple-text);
+        }
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .quick-btn {
+            padding: 0.5rem 1rem;
+            background: var(--apple-surface-elevated);
+            border: 1px solid var(--apple-border);
+            border-radius: 20px;
+            color: var(--apple-text);
+            font-size: 0.8125rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .quick-btn:hover {
+            background: var(--apple-accent);
+            border-color: var(--apple-accent);
         }
         .typing-indicator {
             display: inline-flex;
             align-items: center;
+            gap: 4px;
         }
         .typing-indicator span {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
-            background-color: #3B82F6;
-            margin: 0 2px;
+            background: var(--apple-text);
             animation: typing 1.4s infinite;
         }
-        .typing-indicator span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        .typing-indicator span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
         @keyframes typing {
-            0%, 60%, 100% {
-                transform: translateY(0);
-            }
-            30% {
-                transform: translateY(-10px);
-            }
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+            30% { transform: translateY(-4px); opacity: 1; }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white h-screen flex flex-col">
+<body class="chat-page">
     <!-- Header -->
-    <header class="bg-gradient-to-r from-purple-600 to-blue-600 p-4 shadow-lg">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <i class="fas fa-robot text-2xl"></i>
-                <h1 class="text-2xl font-bold">Rush AI Chat</h1>
-            </div>
-            <a href="/" class="hover:text-purple-200 transition">
-                <i class="fas fa-home mr-2"></i>Back to Dashboard
-            </a>
-        </div>
-    </header>
-
-    <!-- Chat Container -->
-    <main class="flex-1 container mx-auto p-4 flex flex-col">
-        <div class="bg-gray-800 rounded-lg flex-1 flex flex-col p-6">
-            <!-- Chat Header -->
-            <div class="mb-4 pb-4 border-b border-gray-700">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-robot text-xl"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-xl font-semibold">Rush AI</h2>
-                            <p class="text-sm text-gray-400">Your movie expert assistant</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2 text-sm text-gray-400">
-                        <i class="fas fa-circle text-green-500 text-xs"></i>
-                        <span>Online</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Messages Area -->
-            <div id="chatMessages" class="flex-1 overflow-y-auto mb-4 p-4 bg-gray-900 rounded-lg">
-                <div class="chat-bubble bg-blue-600 p-3 rounded-lg mb-2 max-w-2xl">
-                    <p>Hello! I'm Rush, your AI movie expert. I can help you with:</p>
-                    <ul class="mt-2 ml-4 list-disc">
-                        <li>Movie recommendations based on your preferences</li>
-                        <li>Information about actors, directors, and films</li>
-                        <li>Movie plot explanations and analysis</li>
-                        <li>Industry trends and insights</li>
-                        <li>Comparing movies and finding similar films</li>
-                    </ul>
-                    <p class="mt-2">What would you like to know about movies today?</p>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="mb-4">
-                <p class="text-sm text-gray-400 mb-2">Quick actions:</p>
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="quickAction('recommend me a good action movie')" 
-                            class="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-full text-sm transition">
-                        🎬 Action Movie Recommendation
-                    </button>
-                    <button onclick="quickAction('what are the best sci-fi movies of 2024')" 
-                            class="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-full text-sm transition">
-                        🚀 Best Sci-Fi 2024
-                    </button>
-                    <button onclick="quickAction('tell me about Christopher Nolan movies')" 
-                            class="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-full text-sm transition">
-                        🎥 Christopher Nolan Films
-                    </button>
-                    <button onclick="quickAction('what movies are similar to Inception')" 
-                            class="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-full text-sm transition">
-                        🔄 Movies Like Inception
-                    </button>
-                </div>
-            </div>
-
-            <!-- Input Area -->
-            <div class="flex space-x-2 mb-2">
-                <input 
-                    type="text" 
-                    id="chatInput" 
-                    placeholder="Ask me anything about movies..."
-                    class="flex-1 px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none"
-                    onkeypress="if(event.key === 'Enter') sendMessage()"
-                >
-                <button 
-                    onclick="sendMessage()"
-                    class="px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700 transition font-semibold disabled:opacity-50"
-                    id="sendButton"
-                >
-                    <i class="fas fa-paper-plane mr-2"></i>Send
-                </button>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-film"></i></div>
+                <span class="logo-text">Rush <span class="logo-accent">AI</span></span>
             </div>
             
-            <!-- AI Notice -->
-            <div class="bg-gray-700 p-3 rounded-lg text-center">
-                <p class="text-sm text-gray-400">
-                    <i class="fas fa-info-circle mr-2 text-blue-400"></i>
-                    AI responses may take a few seconds - good things take time! 🎬
-                </p>
+            <nav class="nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="#chat" class="nav-link active">AI Chat</a>
+                <a href="/api-keys" class="nav-btn">
+                    <i class="fas fa-key"></i>API Key
+                </a>
+            </nav>
+            
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <nav class="mobile-nav" id="mobileNav">
+            <a href="/" class="mobile-nav-link">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="#chat" class="mobile-nav-link">
+                <i class="fas fa-robot"></i> AI Chat
+            </a>
+            <a href="/api-keys" class="mobile-nav-link">
+                <i class="fas fa-key"></i> Get API Key
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <div class="chat-container">
+                <!-- Chat Header -->
+                <div class="chat-page-header">
+                    <a href="/" class="back-btn">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                    <div class="chat-status">
+                        <i class="fas fa-circle" style="color: var(--apple-success); font-size: 0.5rem;"></i>
+                        Online
+                    </div>
+                </div>
+
+                <!-- Chat Section -->
+                <div class="chat-section" style="flex: 1; display: flex; flex-direction: column;">
+                    <div class="chat-header">
+                        <div class="chat-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div>
+                            <h3 class="chat-title">Chat with Rush AI</h3>
+                            <p class="chat-status"><i class="fas fa-circle"></i> Online</p>
+                        </div>
+                    </div>
+                    
+                    <div id="chatMessages" class="chat-messages" style="flex: 1;">
+                        <div class="chat-message ai">
+                            <p>Hello! I'm Rush, your AI movie expert. I can help you with:</p>
+                            <ul style="margin: 0.5rem 0 0.5rem 1.25rem; list-style: disc;">
+                                <li>Movie recommendations based on your preferences</li>
+                                <li>Information about actors, directors, and films</li>
+                                <li>Movie plot explanations and analysis</li>
+                                <li>Industry trends and insights</li>
+                                <li>Comparing movies and finding similar films</li>
+                            </ul>
+                            <p>What would you like to know about movies today?</p>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <button class="quick-btn" onclick="quickAction('recommend me a good action movie')">
+                            🎬 Action Movie
+                        </button>
+                        <button class="quick-btn" onclick="quickAction('what are the best sci-fi movies of 2024')">
+                            🚀 Best Sci-Fi 2024
+                        </button>
+                        <button class="quick-btn" onclick="quickAction('tell me about Christopher Nolan movies')">
+                            🎥 Nolan Films
+                        </button>
+                        <button class="quick-btn" onclick="quickAction('what movies are similar to Inception')">
+                            🔄 Like Inception
+                        </button>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <input 
+                            type="text" 
+                            id="chatInput" 
+                            class="chat-input"
+                            placeholder="Ask me anything about movies..."
+                            onkeypress="if(event.key === 'Enter') sendMessage()"
+                        >
+                        <button class="chat-send-btn" id="sendButton" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>Send
+                        </button>
+                    </div>
+                    
+                    <div class="chat-hint">
+                        <i class="fas fa-info-circle"></i>
+                        AI responses may take a few seconds
+                    </div>
+                </div>
             </div>
         </div>
     </main>
 
     <script>
         let isTyping = false;
+        
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mobileNav');
+            nav.classList.toggle('active');
+            const btn = document.querySelector('.mobile-menu-btn i');
+            btn.classList.toggle('fa-bars');
+            btn.classList.toggle('fa-times');
+        }
         
         function sendMessage() {
             const input = document.getElementById('chatInput');
@@ -156,75 +218,40 @@
             const messagesDiv = document.getElementById('chatMessages');
             const sendButton = document.getElementById('sendButton');
             
-            // Add user message
             const userBubble = document.createElement('div');
-            userBubble.className = 'chat-bubble bg-gray-700 p-3 rounded-lg mb-2 max-w-2xl ml-auto';
-            userBubble.innerHTML = `
-                <div class="flex items-start space-x-2">
-                    <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-user text-xs"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">You</p>
-                        <p>${escapeHtml(message)}</p>
-                    </div>
-                </div>
-            `;
+            userBubble.className = 'chat-message user';
+            userBubble.innerHTML = `<p>${escapeHtml(message)}</p>`;
             messagesDiv.appendChild(userBubble);
             
             input.value = '';
             sendButton.disabled = true;
             isTyping = true;
             
-            // Add typing indicator
             const typingBubble = document.createElement('div');
-            typingBubble.className = 'chat-bubble bg-blue-600 p-3 rounded-lg mb-2 max-w-2xl';
+            typingBubble.className = 'chat-message ai';
             typingBubble.innerHTML = `
-                <div class="flex items-start space-x-2">
-                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-robot text-xs"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs text-blue-200 mb-1">Rush AI</p>
-                        <div class="typing-indicator">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
-                    </div>
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
             `;
             messagesDiv.appendChild(typingBubble);
             
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
             
-            // Send to AI
             fetch('/api/chat', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: message })
             })
             .then(response => response.json())
             .then(data => {
-                // Remove typing indicator
                 typingBubble.remove();
                 
-                // Add AI response
                 const aiBubble = document.createElement('div');
-                aiBubble.className = 'chat-bubble bg-blue-600 p-3 rounded-lg mb-2 max-w-2xl';
-                aiBubble.innerHTML = `
-                    <div class="flex items-start space-x-2">
-                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-robot text-xs"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs text-blue-200 mb-1">Rush AI</p>
-                            <p>${escapeHtml(data.response)}</p>
-                        </div>
-                    </div>
-                `;
+                aiBubble.className = 'chat-message ai';
+                aiBubble.innerHTML = `<p>${escapeHtml(data.response)}</p>`;
                 messagesDiv.appendChild(aiBubble);
                 
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -236,18 +263,8 @@
                 console.error('Error:', error);
                 
                 const errorBubble = document.createElement('div');
-                errorBubble.className = 'chat-bubble bg-red-600 p-3 rounded-lg mb-2 max-w-2xl';
-                errorBubble.innerHTML = `
-                    <div class="flex items-start space-x-2">
-                        <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-exclamation-triangle text-xs"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs text-red-200 mb-1">Error</p>
-                            <p>Sorry, I encountered an error. Please try again.</p>
-                        </div>
-                    </div>
-                `;
+                errorBubble.className = 'chat-message ai';
+                errorBubble.innerHTML = '<p>Sorry, I encountered an error. Please try again.</p>';
                 messagesDiv.appendChild(errorBubble);
                 
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -262,33 +279,20 @@
         }
         
         function escapeHtml(text) {
-            const map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
             return text.replace(/[&<>"']/g, m => map[m]);
         }
         
-        // Focus input on load
         document.getElementById('chatInput').focus();
         
-        // Add some welcome messages after a delay
         setTimeout(() => {
             const messagesDiv = document.getElementById('chatMessages');
             const tipsBubble = document.createElement('div');
-            tipsBubble.className = 'chat-bubble bg-gray-700 p-3 rounded-lg mb-2 max-w-2xl';
+            tipsBubble.className = 'chat-message ai';
             tipsBubble.innerHTML = `
-                <div class="text-center">
-                    <p class="text-sm text-gray-400 mb-2">💡 Pro tips:</p>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
-                        <div>🎯 Be specific about genres</div>
-                        <div>📅 Mention years or decades</div>
-                        <div>🎭 Ask about actors/directors</div>
-                    </div>
-                </div>
+                <p style="text-align: center; color: var(--apple-text-secondary);">
+                    💡 Pro tips: Be specific about genres • Mention years or decades • Ask about actors/directors
+                </p>
             `;
             messagesDiv.appendChild(tipsBubble);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
